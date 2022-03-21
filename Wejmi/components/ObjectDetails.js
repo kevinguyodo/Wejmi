@@ -1,7 +1,9 @@
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 
 export default () => {
-  <View>
-    <Text>Details</Text>
-  </View>;
+  return (
+    <View>
+      <Text>Details</Text>
+    </View>
+  );
 };
