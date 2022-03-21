@@ -8,17 +8,25 @@ export default ({ navigation }) => {
   const viewDetails = () => {
     navigation.navigate("Details");
     console.log("Click");
+  
   };
+  const ViewCreate = () => {
+    navigation.navigate("Create");
+    console.log('create Page')
+  }
 
   return (
     <View style={styles.containerHome}>
-      <Text style={styles.home}>Home</Text>
       <Button style={styles.buttonHome} title="home" onPress={viewDetails}>
         Go to home
       </Button>
+      <Button style={styles.buttonHome} title="Create" onPress={ViewCreate}>
+        Modify</Button>
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   containerHome: {

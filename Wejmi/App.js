@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import Home from "./components/Home";
 import ObjectDetails from "./components/ObjectDetails";
+import Create from "./components/CreateCard";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -12,6 +13,7 @@ const Nav = () => {
     <Navigator>
       <Screen name="Home" component={Home} />
       <Screen name="Details" component={ObjectDetails} />
+      <Screen name="Create" component={Create} />
     </Navigator>
   );
 };
