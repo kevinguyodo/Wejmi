@@ -7,9 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   ImageBackground,
+  ScrollView,
 } from "react-native";
-import { Card } from 'react-native-paper';
-
+import { Card, Title, Paragraph } from "react-native-paper";
 
 export default ({ navigation }) => {
   const viewDetails = () => {
@@ -18,67 +18,111 @@ export default ({ navigation }) => {
   const ViewCreate = () => {
     navigation.navigate("Create");
     console.log("create Page");
-    
+  };
+
+  const onPress = () => {
+    console.log("Ca marche GG");
   };
 
   return (
     <View>
-{/* -------------------------------------------------------------------------------- */}
+      {/* -------------------------------------------------------------------------------- */}
       <View style={styles.containHeader}>
-        <Button 
+        <Button
           style={styles.header}
           title="Create Card"
           onPress={ViewCreate}
-          color='#616161'>
-        </Button>        
+          color="#616161"
+        ></Button>
       </View>
-{/* -------------------------------------------------------------------------------- */}
+      {/* -------------------------------------------------------------------------------- */}
 
       <View style={styles.inputTxt}>
-      <TextInput
-        style={{height: 40, paddingLeft:10}}
-        
-        placeholder="   Trouve ton objet Marmoud ..."/>
+        <TextInput
+          style={{ height: 40, paddingLeft: 10 }}
+          placeholder="   Trouve ton objet Marmoud ..."
+        />
       </View>
-{/* -------------------------------------------------------------------------------- */}
+      {/* -------------------------------------------------------------------------------- */}
 
-      <View style={styles.containerHome}>
+      <ScrollView style={styles.containerHome}>
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+          <Card
+            style={{
+              marginTop: 30,
+              backgroundColor: "#9E9E9E",
+              marginLeft: 10,
+              marginRight: 10,
+              height: 250,
+            }}
+          >
+            <Card.Content>
+              <Title>Bébé tismey</Title>
+              <Paragraph>Salut le S, c'est david</Paragraph>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
 
-      <Card>
-         
-        </Card>
-      </View>
-{/* -------------------------------------------------------------------------------- */}
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+          <Card
+            style={{
+              marginTop: 30,
+              backgroundColor: "#9E9E9E",
+              marginLeft: 10,
+              marginRight: 10,
+              height: 250,
+            }}
+          >
+            <Card.Content>
+              <Title>Bébé tismey</Title>
+              <Paragraph>Salut le S, c'est david</Paragraph>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
 
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+          <Card
+            style={{
+              marginTop: 30,
+              backgroundColor: "#9E9E9E",
+              marginLeft: 10,
+              marginRight: 10,
+              height: 250,
+            }}
+          >
+            <Card.Content>
+              <Title>Bébé tismey</Title>
+              <Paragraph>Salut le S, c'est david</Paragraph>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
+      </ScrollView>
+      {/* -------------------------------------------------------------------------------- */}
     </View>
   );
 };
 
-
-
 const styles = StyleSheet.create({
-  
   containHeader: {
     marginRight: 200,
     marginLeft: 10,
     marginTop: 20,
-
   },
 
   inputTxt: {
     borderWidth: 2,
-    borderColor: "#9E9E9E",
+    borderColor: "#212121",
     marginTop: 10,
     marginLeft: 10,
     marginRight: 10,
   },
-  containerHome: {
+  containHome: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 90,
-    backgroundColor: '#616161',
+    backgroundColor: "#616161",
     marginTop: 50,
-    marginLeft:20,
-    marginRight:20,
+    marginLeft: 20,
+    marginRight: 20,
   },
 });
