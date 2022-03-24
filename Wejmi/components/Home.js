@@ -14,6 +14,7 @@ import { Card, Title, Paragraph } from "react-native-paper";
 export default ({ navigation }) => {
   const viewDetails = () => {
     navigation.navigate("Create");
+    console.log("Click");
   };
   const ViewCreate = () => {
     navigation.navigate("Create");
