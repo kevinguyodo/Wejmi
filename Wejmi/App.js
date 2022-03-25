@@ -4,6 +4,8 @@ import Home from "./components/Home";
 import CreateObject from "./components/CreateObject";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
+import ModifyObject from "./components/ModifyObject";
+
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
@@ -12,6 +14,7 @@ const Nav = () => {
     <Navigator screenOptions={{ headerTitleAlign: "center" }}>
       <Screen name="Bibliothèque" component={Home} />
       <Screen name="Create" component={CreateObject} />
+      <Screen name="Modify" component={ModifyObject} />
     </Navigator>
   );
 };

@@ -5,6 +5,10 @@ export default ({ navigation }) => {
     navigation.navigate("Create");
   };
 
+  const viewModify = () => {
+    navigation.navigate("Modify");
+  };
+
   return (
     <View>
       <View>
@@ -16,10 +20,14 @@ export default ({ navigation }) => {
         <Button style={styles.buttonHome} title="home" onPress={viewDetails}>
           Go to home
         </Button>
+        <Button style={styles.buttonHomes} title="Modify" onPress={viewModify}>
+          Go to Modify
+        </Button>
       </View>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   header: {
@@ -36,5 +44,9 @@ const styles = StyleSheet.create({
   buttonHome: {
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  buttonHomes: {
+    paddingTop: 20,
+    paddingBottom: 20,
   },
 });
