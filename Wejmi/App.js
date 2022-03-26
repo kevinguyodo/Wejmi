@@ -11,7 +11,7 @@ const Nav = () => {
   return (
     <Navigator screenOptions={{ headerTitleAlign: "center" }}>
       <Screen
-        name="Bibliothèque"
+        name="Home"
         component={Home}
         options={{
           headerStyle: {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextInput,
   SafeAreaView,
@@ -7,8 +7,31 @@ import {
   Button,
 } from "react-native";
 import { Text, Picker, Form } from "native-base";
+import * as FileSystem from "expo-file-system";
 
-export default () => {
+const fileURI = FileSystem.documentDirectory + "Wejmi.json";
+
+// Create and write in json
+const createFile = async (object) => {
+  await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(object));
+};
+
+// uri can be different JSON file
+const fileExists = async (uri) => {
+  return (await FileSystem.getInfoAsync(uri)).exists;
+};
+
+export default ({ navigation }) => {
+  const readFile = async () => {
+    if (await fileExists(fileURI)) {
+      const content = await FileSystem.readAsStringAsync(fileURI);
+      setAllObjectInformation(JSON.parse(content));
+    }
+  };
+  useEffect(() => {
+    readFile();
+  }, []);
+
   const arrayOfPlaces = [
     "Salon",
     "Salle à manger",
@@ -26,15 +49,7 @@ export default () => {
   const [furnitureItem, setFurnitureItem] = useState("");
   const [description, setDescription] = useState("");
 
-  const [allObjectInformation, setAllObjectInformation] = useState([
-    {
-      name: "Clé de voiture",
-      lieux: "Cuisine",
-      compartment: "undefined",
-      meuble: "Meuble à gauche",
-      description: "null",
-    },
-  ]);
+  const [allObjectInformation, setAllObjectInformation] = useState([]);
 
   const onValueChanges = (value) => {
     setPlaces(value);
@@ -44,13 +59,14 @@ export default () => {
       ...allObjectInformation,
       {
         name: name,
-        lieux: places,
+        place: places,
         compartment: compartment,
-        meuble: furnitureItem,
+        furniture: furnitureItem,
         description: description,
       },
     ];
     setAllObjectInformation(newObject);
+    createFile(newObject);
     setName("");
     setPlaces("");
     setCompartment("");
@@ -124,7 +140,7 @@ export default () => {
           style={styles.buttonHome}
           onPress={() => {
             addObject();
-            console.log({ allObjectInformation });
+            navigation.navigate("Home");
           }}
         />
       </View>

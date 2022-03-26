@@ -1,30 +1,35 @@
 import {
-  Text,
   View,
   Button,
   StyleSheet,
-  Image,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
   ScrollView,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
+import CreateObject from "./CreateObject";
+import { useEffect, useState } from "react";
+import * as FileSystem from "expo-file-system";
+import Cards from "./Cards";
+
+const fileURI = FileSystem.documentDirectory + "Wejmi.json";
+const fileExists = async (uri) => {
+  return (await FileSystem.getInfoAsync(uri)).exists;
+};
 
 export default ({ navigation }) => {
-  const viewDetails = () => {
-    navigation.navigate("Create");
-    console.log("Click");
-  };
-  const ViewCreate = () => {
-    navigation.navigate("Create");
-    console.log("create Page");
-  };
-
-  const onPress = () => {
-    console.log("Ca marche GG");
+  const [objects, setObject] = useState([]);
+  const readFile = async () => {
+    if (await fileExists(fileURI)) {
+      const content = await FileSystem.readAsStringAsync(fileURI);
+      setObject(JSON.parse(content));
+      console.log(JSON.parse(content));
+    }
   };
 
+  useEffect(() => {
+    readFile();
+  }, []);
   return (
     <View>
       {/* -------------------------------------------------------------------------------- */}
@@ -32,71 +37,46 @@ export default ({ navigation }) => {
         <Button
           style={styles.header}
           title="Create Card"
-          onPress={ViewCreate}
+          onPress={() => {
+            navigation.navigate("Create");
+          }}
           color="#616161"
         ></Button>
+        <Button
+          title="Information JSON"
+          color="black"
+          onPress={() => {
+            readFile();
+            // console.log(
+            //   objects.map((c) => {
+            //     return c;
+            //   })
+            // );
+            // test();
+          }}
+        />
       </View>
       {/* -------------------------------------------------------------------------------- */}
 
       <View style={styles.inputTxt}>
         <TextInput
           style={{ height: 40, paddingLeft: 10 }}
-          placeholder="   Trouve ton objet Marmoud ..."
+          placeholder="Trouve ton objet Marmoud ..."
         />
       </View>
       {/* -------------------------------------------------------------------------------- */}
 
       <ScrollView style={styles.containerHome}>
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Card
-            style={{
-              marginTop: 30,
-              backgroundColor: "#9E9E9E",
-              marginLeft: 10,
-              marginRight: 10,
-              height: 250,
-            }}
-          >
-            <Card.Content>
-              <Title>Bébé tismey</Title>
-              <Paragraph>Salut le S, c'est david</Paragraph>
-            </Card.Content>
-          </Card>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Card
-            style={{
-              marginTop: 30,
-              backgroundColor: "#9E9E9E",
-              marginLeft: 10,
-              marginRight: 10,
-              height: 250,
-            }}
-          >
-            <Card.Content>
-              <Title>Bébé tismey</Title>
-              <Paragraph>Salut le S, c'est david</Paragraph>
-            </Card.Content>
-          </Card>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Card
-            style={{
-              marginTop: 30,
-              backgroundColor: "#9E9E9E",
-              marginLeft: 10,
-              marginRight: 10,
-              height: 250,
-            }}
-          >
-            <Card.Content>
-              <Title>Bébé tismey</Title>
-              <Paragraph>Salut le S, c'est david</Paragraph>
-            </Card.Content>
-          </Card>
-        </TouchableOpacity>
+        {objects.map((c, index) => (
+          <Cards
+            name={c.name}
+            place={c.place}
+            compartment={c.compartment}
+            furnitureItem={c.furniture}
+            description={c.description}
+            key={index}
+          />
+        ))}
       </ScrollView>
       {/* -------------------------------------------------------------------------------- */}
     </View>
