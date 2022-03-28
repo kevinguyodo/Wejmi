@@ -12,9 +12,24 @@ const { Navigator, Screen } = createNativeStackNavigator();
 const Nav = () => {
   return (
     <Navigator screenOptions={{ headerTitleAlign: "center" }}>
-      <Screen name="Bibliothèque" component={Home} />
-      <Screen name="Create" component={CreateObject} />
-      <Screen name="Modify" component={ModifyObject} />
+      <Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerStyle: {
+            backgroundColor: "#616161",
+          },
+        }}
+      />
+      <Screen
+        name="Create"
+        component={CreateObject}
+        options={{
+          headerStyle: {
+            backgroundColor: "#616161",
+          },
+        }}
+      />
     </Navigator>
   );
 };
