@@ -6,9 +6,9 @@ import {
   View,
   Button,
 } from "react-native";
-import { Text, Picker, Form } from "native-base";
-import * as FileSystem from "expo-file-system";
-
+import { Picker,Text, Form } from "native-base";
+import * as FileSystem from 'expo-file-system';
+//import {Picker} from '@react-native-picker/picker';
 const fileURI = FileSystem.documentDirectory + "Wejmi.json";
 
 // Create and write in json
