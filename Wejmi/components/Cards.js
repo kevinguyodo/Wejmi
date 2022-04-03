@@ -17,6 +17,7 @@ export default ({
         <Paragraph>Compartiment : {compartment}</Paragraph>
         <Paragraph>Meuble : {furnitureItem}</Paragraph>
         <Paragraph>Description : {description}</Paragraph>
+
         <Card.Cover source={{ uri: image }} />
       </Card.Content>
     </Card>

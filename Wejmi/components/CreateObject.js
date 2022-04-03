@@ -5,6 +5,8 @@ import {
   StyleSheet,
   View,
   Button,
+  Text,
+  Image,
 } from "react-native";
 import { Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";
@@ -53,6 +55,8 @@ export default ({ navigation }) => {
   const [imageURI, setImageURI] = useState("");
 
   const [allObjectInformation, setAllObjectInformation] = useState([]);
+
+  const [errorMessage, setErrorMessage] = useState(false);
 
   // --------------- Use camera to take a picture ------------------------------
   const openCamera = async () => {
@@ -113,9 +117,16 @@ export default ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
+        <Text
+          style={
+            imageURI.length != 0 ? { color: "grey" } : { color: "#ecf0f1" }
+          }
+        >
+          Photo capturé
+        </Text>
         <Button title="Prendre une photo" onPress={openCamera} />
-        {/* <Text style={styles.paragraph}>circle picture</Text> */}
       </View>
+
       <View>
         <TextInput
           style={styles.paragraph}
@@ -164,7 +175,7 @@ export default ({ navigation }) => {
       <View>
         <TextInput
           style={styles.description}
-          placeholder="Description complémentaire sur l'objet"
+          placeholder="Description complémentaire sur l'objet (optionnel)"
           onChangeText={(objectDescription) =>
             setDescription(objectDescription)
           }
@@ -176,10 +187,22 @@ export default ({ navigation }) => {
           title="Créer l'objet"
           style={styles.buttonHome}
           onPress={() => {
-            addObject();
-            navigation.navigate("Home");
+            if (
+              name.length != 0 &&
+              furnitureItem.length != 0 &&
+              places != "Lieux"
+            ) {
+              addObject();
+              navigation.navigate("Home");
+            } else {
+              setErrorMessage(true);
+            }
           }}
         />
+        <Text style={errorMessage ? { color: "red" } : { color: "#ecf0f1" }}>
+          Veuillez vérifier si les champs 'Nom de l'objet', 'Lieux' et 'Meuble'
+          est bien rempli ou correct
+        </Text>
       </View>
     </SafeAreaView>
   );
