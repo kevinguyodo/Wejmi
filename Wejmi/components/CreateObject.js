@@ -6,8 +6,9 @@ import {
   View,
   Button,
 } from "react-native";
-import { Text, Picker, Form } from "native-base";
+import { Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 
 const fileURI = FileSystem.documentDirectory + "Wejmi.json";
 
@@ -44,12 +45,45 @@ export default ({ navigation }) => {
     "Garage",
   ];
   const [name, setName] = useState("");
+
   const [places, setPlaces] = useState("");
   const [compartment, setCompartment] = useState("");
   const [furnitureItem, setFurnitureItem] = useState("");
   const [description, setDescription] = useState("");
+  const [imageURI, setImageURI] = useState("");
 
   const [allObjectInformation, setAllObjectInformation] = useState([]);
+
+  // --------------- Use camera to take a picture ------------------------------
+  const openCamera = async () => {
+    let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    let pickerResult = await ImagePicker.launchCameraAsync();
+
+    let URIChanged = await copyFile(pickerResult);
+    console.log(URIChanged);
+    setImageURI(URIChanged);
+  };
+
+  // --------------- Copy picture in document folder ------------------------------
+  const copyFile = async (image) => {
+    let fileName = image.uri.substring(
+      image.uri.lastIndexOf("/") + 1,
+      image.uri.length
+    );
+    const uri = `${FileSystem.documentDirectory}${fileName}`;
+
+    await FileSystem.copyAsync({
+      from: image.uri,
+      to: uri,
+    });
+    return uri;
+  };
 
   const onValueChanges = (value) => {
     setPlaces(value);
@@ -63,6 +97,7 @@ export default ({ navigation }) => {
         compartment: compartment,
         furniture: furnitureItem,
         description: description,
+        image: imageURI,
       },
     ];
     setAllObjectInformation(newObject);
@@ -72,12 +107,14 @@ export default ({ navigation }) => {
     setCompartment("");
     setFurnitureItem("");
     setDescription("");
+    setImageURI("");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={styles.paragraph}>circle picture</Text>
+        <Button title="Prendre une photo" onPress={openCamera} />
+        {/* <Text style={styles.paragraph}>circle picture</Text> */}
       </View>
       <View>
         <TextInput
@@ -175,12 +212,3 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
 });
-
-// export default () => {
-
-//   return (
-//     <View >
-//       <Text>Cards</Text>
-//     </View>
-//   );
-// };
