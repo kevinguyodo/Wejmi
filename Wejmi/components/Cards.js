@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native-web";
 import { Card, Title, Paragraph } from "react-native-paper";
+import { TouchableOpacity } from "react-native";
 
 export default ({
   name,
@@ -8,19 +9,22 @@ export default ({
   furnitureItem,
   description,
   image,
+  modifyObject,
 }) => {
   return (
-    <Card style={styles.card}>
-      <Card.Content>
-        <Title>{name}</Title>
-        <Paragraph>Endroit : {place}</Paragraph>
-        <Paragraph>Compartiment : {compartment}</Paragraph>
-        <Paragraph>Meuble : {furnitureItem}</Paragraph>
-        <Paragraph>Description : {description}</Paragraph>
+    <TouchableOpacity onLongPress={modifyObject}>
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title>{name}</Title>
+          <Paragraph>Endroit : {place}</Paragraph>
+          <Paragraph>Compartiment : {compartment}</Paragraph>
+          <Paragraph>Meuble : {furnitureItem}</Paragraph>
+          <Paragraph>Description : {description}</Paragraph>
 
-        <Card.Cover source={{ uri: image }} />
-      </Card.Content>
-    </Card>
+          <Card.Cover source={{ uri: image }} />
+        </Card.Content>
+      </Card>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({

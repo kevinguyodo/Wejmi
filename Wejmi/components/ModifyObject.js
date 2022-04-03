@@ -1,10 +1,20 @@
-import {  Text, View } from "react-native";
+import { Text, View } from "react-native";
 
-export default () => {
+import Cards from "./Cards";
 
+export default ({ route }) => {
+  const objectInformation = route.params.object;
+  console.log(objectInformation.name);
   return (
-    <View >
-      <Text>ModifyObject</Text>
+    <View>
+      <Cards
+        name={objectInformation.name}
+        place={objectInformation.place}
+        compartment={objectInformation.compartment}
+        furnitureItem={objectInformation.furnitureItem}
+        description={objectInformation.description}
+        image={objectInformation.image}
+      ></Cards>
     </View>
   );
 };

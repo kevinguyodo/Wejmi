@@ -36,9 +36,26 @@ export default ({ navigation }) => {
     createFile(newObject);
   };
 
+  const modifyObject = (object) => {
+    navigation.navigate("Modify", {
+      object,
+      objectChange: (newObject) => {
+        object.name = newObject.name;
+        object.place = newObject.place;
+        object.compartment = newObject.compartment;
+        object.furniture = newObject.furniture;
+        object.description = newObject.description;
+        object.image = newObject.image;
+        setObject([...objects]);
+        createFile(objects);
+      },
+    });
+  };
+
   useEffect(() => {
     readFile();
   }, []);
+
   return (
     <View>
       {/* -------------------------------------------------------------------------------- */}
@@ -56,12 +73,6 @@ export default ({ navigation }) => {
           color="black"
           onPress={() => {
             readFile();
-            // console.log(
-            //   objects.map((c) => {
-            //     return c;
-            //   })
-            // );
-            // test();
           }}
         />
       </View>
@@ -83,14 +94,17 @@ export default ({ navigation }) => {
       {/* -------------------------------------------------------------------------------- */}
 
       <ScrollView style={styles.containerHome}>
-        {objects.map((c, index) => (
+        {objects.map((object, index) => (
           <Cards
-            name={c.name}
-            place={c.place}
-            compartment={c.compartment}
-            furnitureItem={c.furniture}
-            description={c.description}
-            image={c.image}
+            name={object.name}
+            place={object.place}
+            compartment={object.compartment}
+            furnitureItem={object.furniture}
+            description={object.description}
+            image={object.image}
+            modifyObject={() => {
+              modifyObject(object);
+            }}
             key={index}
           />
         ))}
