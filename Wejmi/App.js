@@ -30,6 +30,15 @@ const Nav = () => {
           },
         }}
       />
+      <Screen
+        name="Modify"
+        component={ModifyObject}
+        options={{
+          headerStyle: {
+            backgroundColor: "#616161",
+          },
+        }}
+      />
     </Navigator>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, AsyncStorage } from "react";
 import {
   TextInput,
   SafeAreaView,
@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Text, Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";
+
 
 const fileURI = FileSystem.documentDirectory + "Wejmi.json";
 
@@ -19,6 +20,10 @@ const createFile = async (object) => {
 // uri can be different JSON file
 const fileExists = async (uri) => {
   return (await FileSystem.getInfoAsync(uri)).exists;
+};
+
+const storeData = async (object) => {
+  return (await AsyncStorage.setItem("@fileURI", JSON.stringify(object)));
 };
 
 export default ({ navigation }) => {
@@ -65,6 +70,8 @@ export default ({ navigation }) => {
         description: description,
       },
     ];
+    storeData(newObject);
+    dataFile(newObject);
     setAllObjectInformation(newObject);
     createFile(newObject);
     setName("");

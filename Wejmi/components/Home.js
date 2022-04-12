@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
 import CreateObject from "./CreateObject";
+import ModifyObject from "./ModifyObject";
 import { useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
 import Cards from "./Cards";
@@ -68,14 +69,22 @@ export default ({ navigation }) => {
 
       <ScrollView style={styles.containerHome}>
         {objects.map((c, index) => (
-          <Cards
+          <View>
+            <Cards
             name={c.name}
             place={c.place}
             compartment={c.compartment}
             furnitureItem={c.furniture}
             description={c.description}
             key={index}
-          />
+            />
+            <Button 
+              title="modifier" 
+              onPress={() => {
+              navigation.navigate("Modify");
+              }}
+            />
+          </View>
         ))}
       </ScrollView>
       {/* -------------------------------------------------------------------------------- */}
