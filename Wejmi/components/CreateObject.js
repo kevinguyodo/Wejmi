@@ -5,9 +5,12 @@ import {
   StyleSheet,
   View,
   Button,
+  Text,
+  Image,
 } from "react-native";
-import { Text, Picker, Form } from "native-base";
+import { Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 
 
 const fileURI = FileSystem.documentDirectory + "Wejmi.json";
@@ -49,12 +52,47 @@ export default ({ navigation }) => {
     "Garage",
   ];
   const [name, setName] = useState("");
+
   const [places, setPlaces] = useState("");
   const [compartment, setCompartment] = useState("");
   const [furnitureItem, setFurnitureItem] = useState("");
   const [description, setDescription] = useState("");
+  const [imageURI, setImageURI] = useState("");
 
   const [allObjectInformation, setAllObjectInformation] = useState([]);
+
+  const [errorMessage, setErrorMessage] = useState(false);
+
+  // --------------- Use camera to take a picture ------------------------------
+  const openCamera = async () => {
+    let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    let pickerResult = await ImagePicker.launchCameraAsync();
+
+    let URIChanged = await copyFile(pickerResult);
+    console.log(URIChanged);
+    setImageURI(URIChanged);
+  };
+
+  // --------------- Copy picture in document folder ------------------------------
+  const copyFile = async (image) => {
+    let fileName = image.uri.substring(
+      image.uri.lastIndexOf("/") + 1,
+      image.uri.length
+    );
+    const uri = `${FileSystem.documentDirectory}${fileName}`;
+
+    await FileSystem.copyAsync({
+      from: image.uri,
+      to: uri,
+    });
+    return uri;
+  };
 
   const onValueChanges = (value) => {
     setPlaces(value);
@@ -68,6 +106,7 @@ export default ({ navigation }) => {
         compartment: compartment,
         furniture: furnitureItem,
         description: description,
+        image: imageURI,
       },
     ];
     storeData(newObject);
@@ -79,13 +118,22 @@ export default ({ navigation }) => {
     setCompartment("");
     setFurnitureItem("");
     setDescription("");
+    setImageURI("");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={styles.paragraph}>circle picture</Text>
+        <Text
+          style={
+            imageURI.length != 0 ? { color: "grey" } : { color: "#ecf0f1" }
+          }
+        >
+          Photo capturé
+        </Text>
+        <Button title="Prendre une photo" onPress={openCamera} />
       </View>
+
       <View>
         <TextInput
           style={styles.paragraph}
@@ -134,7 +182,7 @@ export default ({ navigation }) => {
       <View>
         <TextInput
           style={styles.description}
-          placeholder="Description complémentaire sur l'objet"
+          placeholder="Description complémentaire sur l'objet (optionnel)"
           onChangeText={(objectDescription) =>
             setDescription(objectDescription)
           }
@@ -146,10 +194,22 @@ export default ({ navigation }) => {
           title="Créer l'objet"
           style={styles.buttonHome}
           onPress={() => {
-            addObject();
-            navigation.navigate("Home");
+            if (
+              name.length != 0 &&
+              furnitureItem.length != 0 &&
+              places != "Lieux"
+            ) {
+              addObject();
+              navigation.navigate("Home");
+            } else {
+              setErrorMessage(true);
+            }
           }}
         />
+        <Text style={errorMessage ? { color: "red" } : { color: "#ecf0f1" }}>
+          Veuillez vérifier si les champs 'Nom de l'objet', 'Lieux' et 'Meuble'
+          est bien rempli ou correct
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -182,12 +242,3 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
 });
-
-// export default () => {
-
-//   return (
-//     <View >
-//       <Text>Cards</Text>
-//     </View>
-//   );
-// };
