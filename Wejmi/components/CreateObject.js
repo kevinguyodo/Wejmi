@@ -6,7 +6,6 @@ import {
   View,
   Button,
   Text,
-  Image,
 } from "react-native";
 import { Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";

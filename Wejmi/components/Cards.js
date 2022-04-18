@@ -11,6 +11,7 @@ export default ({
   image,
   modifyObject,
 }) => {
+  // Affichage conditionnel
   const displayImage = () => {
     if (image.length === 0) {
       return;
@@ -20,7 +21,7 @@ export default ({
   };
 
   const displayParagraph = (objectElement, value) => {
-    if (value.length === 0) {
+    if (value === "") {
       return;
     } else {
       return (

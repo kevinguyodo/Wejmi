@@ -1,13 +1,4 @@
-import {
-  View,
-  Button,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { Card, Title, Paragraph } from "react-native-paper";
-import CreateObject from "./CreateObject";
+import { View, Button, StyleSheet, TextInput, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
 import Cards from "./Cards";
@@ -52,6 +43,8 @@ export default ({ navigation }) => {
       },
     });
   };
+
+  // Affichage conditionnel
   const displayCard = (object, index) => {
     const objectElementArray = [
       object.name,
@@ -60,21 +53,22 @@ export default ({ navigation }) => {
       object.furniture,
       object.description,
     ];
+    const card = (
+      <Cards
+        name={object.name}
+        place={object.place}
+        compartment={object.compartment}
+        furnitureItem={object.furniture}
+        description={object.description}
+        image={object.image}
+        modifyObject={() => {
+          modifyObject(object);
+        }}
+        key={index}
+      />
+    );
     if (filterElement.length == 0) {
-      return (
-        <Cards
-          name={object.name}
-          place={object.place}
-          compartment={object.compartment}
-          furnitureItem={object.furniture}
-          description={object.description}
-          image={object.image}
-          modifyObject={() => {
-            modifyObject(object);
-          }}
-          key={index}
-        />
-      );
+      return card;
     } else {
       for (
         let indexArray = 0;
@@ -82,20 +76,7 @@ export default ({ navigation }) => {
         indexArray++
       ) {
         if (objectElementArray[indexArray] === filterElement) {
-          return (
-            <Cards
-              name={object.name}
-              place={object.place}
-              compartment={object.compartment}
-              furnitureItem={object.furniture}
-              description={object.description}
-              image={object.image}
-              modifyObject={() => {
-                modifyObject(object);
-              }}
-              key={index}
-            />
-          );
+          return card;
         }
       }
     }
