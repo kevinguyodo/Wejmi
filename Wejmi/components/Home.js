@@ -22,6 +22,7 @@ const createFile = async (object) => {
 
 export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
+  const [filterElement, setFilterElement] = useState("");
   const readFile = async () => {
     if (await fileExists(fileURI)) {
       const content = await FileSystem.readAsStringAsync(fileURI);
@@ -50,6 +51,54 @@ export default ({ navigation }) => {
         createFile(objects);
       },
     });
+  };
+  const displayCard = (object, index) => {
+    const objectElementArray = [
+      object.name,
+      object.place,
+      object.compartment,
+      object.furniture,
+      object.description,
+    ];
+    if (filterElement.length == 0) {
+      return (
+        <Cards
+          name={object.name}
+          place={object.place}
+          compartment={object.compartment}
+          furnitureItem={object.furniture}
+          description={object.description}
+          image={object.image}
+          modifyObject={() => {
+            modifyObject(object);
+          }}
+          key={index}
+        />
+      );
+    } else {
+      for (
+        let indexArray = 0;
+        indexArray <= objectElementArray.length;
+        indexArray++
+      ) {
+        if (objectElementArray[indexArray] === filterElement) {
+          return (
+            <Cards
+              name={object.name}
+              place={object.place}
+              compartment={object.compartment}
+              furnitureItem={object.furniture}
+              description={object.description}
+              image={object.image}
+              modifyObject={() => {
+                modifyObject(object);
+              }}
+              key={index}
+            />
+          );
+        }
+      }
+    }
   };
 
   useEffect(() => {
@@ -82,7 +131,10 @@ export default ({ navigation }) => {
         <TextInput
           style={{ height: 40, paddingLeft: 10 }}
           placeholder="Trouve ton objet Marmoud ..."
+          onChangeText={(newfilter) => setFilterElement(newfilter)}
         />
+      </View>
+      <View style={{ paddingTop: 10 }}>
         <Button
           onPress={() => {
             removeAllObject();
@@ -94,20 +146,7 @@ export default ({ navigation }) => {
       {/* -------------------------------------------------------------------------------- */}
 
       <ScrollView style={styles.containerHome}>
-        {objects.map((object, index) => (
-          <Cards
-            name={object.name}
-            place={object.place}
-            compartment={object.compartment}
-            furnitureItem={object.furniture}
-            description={object.description}
-            image={object.image}
-            modifyObject={() => {
-              modifyObject(object);
-            }}
-            key={index}
-          />
-        ))}
+        {objects.map((object, index) => displayCard(object, index))}
       </ScrollView>
       {/* -------------------------------------------------------------------------------- */}
     </View>

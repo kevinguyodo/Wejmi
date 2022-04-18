@@ -11,6 +11,13 @@ export default ({
   image,
   modifyObject,
 }) => {
+  const displayImage = () => {
+    if (image.length === 0) {
+      return;
+    } else {
+      return <Card.Cover source={{ uri: image }} />;
+    }
+  };
   return (
     <TouchableOpacity onLongPress={modifyObject}>
       <Card style={styles.card}>
@@ -20,9 +27,8 @@ export default ({
           <Paragraph>Compartiment : {compartment}</Paragraph>
           <Paragraph>Meuble : {furnitureItem}</Paragraph>
           <Paragraph>Description : {description}</Paragraph>
-
-          <Card.Cover source={{ uri: image }} />
         </Card.Content>
+        {displayImage()}
       </Card>
     </TouchableOpacity>
   );
