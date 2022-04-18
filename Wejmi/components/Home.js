@@ -7,20 +7,24 @@ const fileURI = FileSystem.documentDirectory + "Wejmi.json";
 const fileExists = async (uri) => {
   return (await FileSystem.getInfoAsync(uri)).exists;
 };
-const createFile = async (object) => {
+export const createFile = async (object) => {
   await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(object));
 };
 
+export const readFile = async (setObject) => {
+  if (await fileExists(fileURI)) {
+    const content = await FileSystem.readAsStringAsync(fileURI);
+    const contentParse = JSON.parse(content);
+    // --------------- Automatically sorts in alphabetical order -------------------------------
+    contentParse.sort(function (a, b) {
+      return a.name.localeCompare(b.name);
+    });
+    setObject(contentParse);
+  }
+};
 export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
   const [filterElement, setFilterElement] = useState("");
-  const readFile = async () => {
-    if (await fileExists(fileURI)) {
-      const content = await FileSystem.readAsStringAsync(fileURI);
-      setObject(JSON.parse(content));
-      console.log(JSON.parse(content));
-    }
-  };
 
   const removeAllObject = () => {
     const newObject = objects.filter((object) => !object.name.length != 0);
@@ -83,7 +87,7 @@ export default ({ navigation }) => {
   };
 
   useEffect(() => {
-    readFile();
+    readFile(setObject);
   }, []);
 
   return (
@@ -99,10 +103,10 @@ export default ({ navigation }) => {
           color="#616161"
         ></Button>
         <Button
-          title="Information JSON"
+          title="Refresh"
           color="black"
           onPress={() => {
-            readFile();
+            readFile(setObject);
           }}
         />
       </View>
@@ -127,7 +131,7 @@ export default ({ navigation }) => {
       {/* -------------------------------------------------------------------------------- */}
 
       <ScrollView style={styles.containerHome}>
-        {objects.map((object, index) => displayCard(object, index))}
+        {objects.sort().map((object, index) => displayCard(object, index))}
       </ScrollView>
       {/* -------------------------------------------------------------------------------- */}
     </View>
