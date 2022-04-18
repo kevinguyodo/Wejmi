@@ -18,15 +18,27 @@ export default ({
       return <Card.Cover source={{ uri: image }} />;
     }
   };
+
+  const displayParagraph = (objectElement, value) => {
+    if (value.length === 0) {
+      return;
+    } else {
+      return (
+        <Paragraph>
+          {objectElement} : {value}
+        </Paragraph>
+      );
+    }
+  };
   return (
     <TouchableOpacity onLongPress={modifyObject}>
       <Card style={styles.card}>
         <Card.Content>
           <Title>{name}</Title>
-          <Paragraph>Endroit : {place}</Paragraph>
-          <Paragraph>Compartiment : {compartment}</Paragraph>
-          <Paragraph>Meuble : {furnitureItem}</Paragraph>
-          <Paragraph>Description : {description}</Paragraph>
+          {displayParagraph("Endroit", place)}
+          {displayParagraph("Compartiment", compartment)}
+          {displayParagraph("Meuble", furnitureItem)}
+          {displayParagraph("Description", description)}
         </Card.Content>
         {displayImage()}
       </Card>
