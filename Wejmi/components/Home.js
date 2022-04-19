@@ -1,188 +1,218 @@
- import {
-   View,
-   Button,
-   StyleSheet,
-   TextInput,
-   TouchableOpacity,
-   ScrollView,
- } from "react-native";
- import { Card, Title, Paragraph } from "react-native-paper";
- import CreateObject from "./CreateObject";
- import { useEffect, useState } from "react";
- import * as FileSystem from "expo-file-system";
- import Cards from "./Cards";
+import { View, Button, StyleSheet, TextInput, ScrollView } from "react-native";
+import { useEffect, useState } from "react";
+import * as FileSystem from "expo-file-system";
+import Cards from "./Cards";
 
- const fileURI = FileSystem.documentDirectory + "Wejmi.json";
- const fileExists = async (uri) => {
-   return (await FileSystem.getInfoAsync(uri)).exists;
- };
+const fileURI = FileSystem.documentDirectory + "Wejmi.json";
+const fileExists = async (uri) => {
+  return (await FileSystem.getInfoAsync(uri)).exists;
+};
+export const createFile = async (object) => {
+  await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(object));
+};
 
- export default ({ navigation }) => {
-   const [objects, setObject] = useState([]);
-   const readFile = async () => {
-     if (await fileExists(fileURI)) {
-       const content = await FileSystem.readAsStringAsync(fileURI);
-       setObject(JSON.parse(content));
-       console.log(JSON.parse(content));
-     }
-   };
+export const readFile = async (setObject) => {
+  if (await fileExists(fileURI)) {
+    const content = await FileSystem.readAsStringAsync(fileURI);
+    const contentParse = JSON.parse(content);
+    // --------------- Automatically sorts in alphabetical order -------------------------------
+    contentParse.sort(function (a, b) {
+      return a.name.localeCompare(b.name);
+    });
+    setObject(contentParse);
+  }
+};
+export default ({ navigation }) => {
+  const [objects, setObject] = useState([]);
+  const [filterElement, setFilterElement] = useState("");
 
-   useEffect(() => {
-     readFile();
-   }, []);
-   return (
-     <View>
-       {/* -------------------------------------------------------------------------------- */}
-       <View style={styles.containHeader}>
-         <Button
-           style={styles.header}
-           title="Create Card"
-           onPress={() => {
-             navigation.navigate("Create");
-           }}
-           color="#616161"
-         ></Button>
-         <Button
-           title="Information JSON"
-           color="black"
-           onPress={() => {
-             readFile();
-              console.log(
-                objects.map((c) => {
-                  return c;
-                })
-              );
-              test();
-           }}
-         />
-       </View>
-       {/* -------------------------------------------------------------------------------- */}
+  const removeAllObject = () => {
+    const newObject = objects.filter((object) => !object.name.length != 0);
+    setObject(newObject);
+    createFile(newObject);
+  };
 
-       <View style={styles.inputTxt}>
-         <TextInput
-           style={{ height: 40, paddingLeft: 10 }}
-           placeholder="Trouve ton objet Marmoud ..."
-         />
-       </View>
-       {/* -------------------------------------------------------------------------------- */}
+  const modifyObject = (object) => {
+    navigation.navigate("Modify", {
+      object,
+      objectChange: (newObject) => {
+        object.name = newObject.name;
+        object.place = newObject.place;
+        object.compartment = newObject.compartment;
+        object.furniture = newObject.furniture;
+        object.description = newObject.description;
+        object.image = newObject.image;
+        setObject([...objects]);
+        createFile(objects);
+      },
+    });
+  };
 
-       <ScrollView style={styles.containerHome}>
-         {objects.map((c, index) => (
-           <Cards
-             name={c.name}
-             place={c.place}
-             compartment={c.compartment}
-             furnitureItem={c.furniture}
-             description={c.description}
-             key={index}
-           />
-         ))}
-       </ScrollView>
-       {/* -------------------------------------------------------------------------------- */}
-     </View>
-   );
- };
+  // Affichage conditionnel
+  const displayCard = (object, index) => {
+    const objectElementArray = [
+      object.name,
+      object.place,
+      object.compartment,
+      object.furniture,
+      object.description,
+    ];
+    const card = (
+      <Cards
+        name={object.name}
+        place={object.place}
+        compartment={object.compartment}
+        furnitureItem={object.furniture}
+        description={object.description}
+        image={object.image}
+        modifyObject={() => {
+          modifyObject(object);
+        }}
+        key={index}
+      />
+    );
+    if (filterElement.length == 0) {
+      return card;
+    } else {
+      for (
+        let indexArray = 0;
+        indexArray <= objectElementArray.length;
+        indexArray++
+      ) {
+        if (objectElementArray[indexArray] === filterElement) {
+          return card;
+        }
+      }
+    }
+  };
 
- const styles = StyleSheet.create({
-   containHeader: {
-     marginRight: 200,
-     marginLeft: 10,
-     marginTop: 20,
-   },
+  useEffect(() => {
+    readFile(setObject);
+  }, []);
 
-   inputTxt: {
-     borderWidth: 2,
-     borderColor: "#212121",
-     marginTop: 10,
-     marginLeft: 10,
-     marginRight: 10,
-   },
-   containHome: {
-     flex: 1,
-     justifyContent: "center",
-     padding: 90,
-     backgroundColor: "#616161",
-     marginTop: 50,
-     marginLeft: 20,
-     marginRight: 20,
-   },
- });
+  return (
+    <View>
+      {/* -------------------------------------------------------------------------------- */}
+      <View style={styles.containHeader}>
+        <Button
+          style={styles.header}
+          title="Create Card"
+          onPress={() => {
+            navigation.navigate("Create");
+          }}
+          color="#616161"
+        ></Button>
+        <Button
+          title="Refresh"
+          color="black"
+          onPress={() => {
+            readFile(setObject);
+          }}
+        />
+      </View>
+      {/* -------------------------------------------------------------------------------- */}
 
+      <View style={styles.inputTxt}>
+        <TextInput
+          style={{ height: 40, paddingLeft: 10 }}
+          placeholder="Trouve ton objet Marmoud ..."
+          onChangeText={(newfilter) => setFilterElement(newfilter)}
+        />
+      </View>
+      <View style={{ paddingTop: 10 }}>
+        <Button
+          onPress={() => {
+            removeAllObject();
+          }}
+          title="Supprimer tout les objets"
+        ></Button>
+      </View>
 
+      {/* -------------------------------------------------------------------------------- */}
 
+      <ScrollView style={styles.containerHome}>
+        {objects.sort().map((object, index) => displayCard(object, index))}
+      </ScrollView>
+      {/* -------------------------------------------------------------------------------- */}
+    </View>
+  );
+};
 
+const styles = StyleSheet.create({
+  containHeader: {
+    marginRight: 200,
+    marginLeft: 10,
+    marginTop: 20,
+  },
 
-
+  inputTxt: {
+    borderWidth: 2,
+    borderColor: "#212121",
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10,
+  },
+  containHome: {
+    flex: 1,
+    justifyContent: "center",
+    padding: 90,
+    backgroundColor: "#616161",
+    marginTop: 50,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+});
 
 // import React, { useState, useEffect } from "react";
 // import { Button, Image, View, Platform } from "react-native";
 // import * as ImagePicker from "expo-image-picker";
 // import * as FileSystem from "expo-file-system";
 
-// const document = FileSystem.documentDirectory;
-
-// export default () => {
-//   const [image, setImage] = useState(null);
-
+// export default function ImagePickerExample() {
 //   const openCamera = async () => {
-//     // Ask the user for the permission to access the camera
-//     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+//     let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
 
 //     if (permissionResult.granted === false) {
-//       alert("You've refused to allow this appp to access your camera!");
+//       alert("Permission to access camera roll is required!");
 //       return;
 //     }
 
-//     const result = await ImagePicker.launchCameraAsync();
-//     FileSystem.copyAsync(result.uri, document + "images/");
-//     console.log(result.uri);
-//     // if ((await FileSystem.getInfoAsync()).exists) {
-//     //   console.log("exist");
-//     // } else {
-//     //   console.log("doesn't exist");
-//     // }
+//     let pickerResult = await ImagePicker.launchCameraAsync();
 
-//     // result.uri = document + "first_pictures_test.jpg";
-//     // setImage(result.uri);
-//     // Explore the result
-//     console.log(document);
-//     console.log(result.base64);
-
-//     // if (!result.cancelled) {
-//     //   setPickedImagePath(result.uri);
-//     //   console.log(result.uri);
-//     // }
+//     let imageURI = await copyFile(pickerResult);
+//     console.log(imageURI);
+//     return imageURI;
 //   };
 
 //   const pickImage = async () => {
 //     // No permissions request is necessary for launching the image library
-//     let result = await ImagePicker.launchImageLibraryAsync({
-//       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-//       allowsEditing: true,
-//       aspect: [4, 3],
-//       quality: 1,
-//       uri: document + image,
-//     });
-//     // console.log("\n");
-//     // console.log(result.uri);
-//     // console.log("\n");
-//     // console.log(document);
-//     // console.log("\n");
-//     // console.log(image);
+//     let pickerResult = await ImagePicker.launchImageLibraryAsync();
 
-//     if (!result.cancelled) {
-//       setImage(result.uri);
-//     }
+//     let imageURI = await copyFile(pickerResult);
+//     return imageURI;
+//   };
+
+//   const copyFile = async (image) => {
+//     let fileName = image.uri.substring(
+//       image.uri.lastIndexOf("/") + 1,
+//       image.uri.length
+//     );
+//     const uri = `${FileSystem.documentDirectory}${fileName}`;
+
+//     await FileSystem.copyAsync({
+//       from: image.uri,
+//       to: uri,
+//     });
+//     return uri;
 //   };
 
 //   return (
 //     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-//       <Button title="Pick an image from camera roll" onPress={pickImage} />
-//       <Button title="Take picture" onPress={openCamera} />
-//       {image && (
+//       <Button title="Pick an image from camera roll" onPress={openCamera} />
+//       <Button title="Pick image from library" onPress={pickImage} />
+//       {/* {image && (
 //         <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-//       )}
+//       )} */}
 //     </View>
-    
 //   );
-// };
+// }

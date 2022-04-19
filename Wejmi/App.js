@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import Home from "./components/Home";
 import CreateObject from "./components/CreateObject";
+import ModifyObject from "./components/ModifyObject";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -22,6 +23,15 @@ const Nav = () => {
       <Screen
         name="Create"
         component={CreateObject}
+        options={{
+          headerStyle: {
+            backgroundColor: "#616161",
+          },
+        }}
+      />
+      <Screen
+        name="Modify"
+        component={ModifyObject}
         options={{
           headerStyle: {
             backgroundColor: "#616161",

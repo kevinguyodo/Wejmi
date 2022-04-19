@@ -1,38 +1,18 @@
-
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   TextInput,
   SafeAreaView,
   StyleSheet,
   View,
   Button,
+  Text,
 } from "react-native";
-import { Text, Picker, Form } from "native-base";
+import { Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";
-
-const fileURI = FileSystem.documentDirectory + "Wejmi.json";
-
-// Create and write in json
-const createFile = async (object) => {
-  await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(object));
-};
-
-// uri can be different JSON file
-const fileExists = async (uri) => {
-  return (await FileSystem.getInfoAsync(uri)).exists;
-};
+import * as ImagePicker from "expo-image-picker";
+import { readFile, createFile } from "./Home";
 
 export default ({ navigation }) => {
-  const readFile = async () => {
-    if (await fileExists(fileURI)) {
-      const content = await FileSystem.readAsStringAsync(fileURI);
-      setAllObjectInformation(JSON.parse(content));
-    }
-  };
-  useEffect(() => {
-    readFile();
-  }, []);
-
   const arrayOfPlaces = [
     "Salon",
     "Salle à manger",
@@ -44,17 +24,53 @@ export default ({ navigation }) => {
     "Veranda",
     "Garage",
   ];
+  // --------------- Creation of all Hooks ------------------------------
   const [name, setName] = useState("");
   const [places, setPlaces] = useState("");
   const [compartment, setCompartment] = useState("");
   const [furnitureItem, setFurnitureItem] = useState("");
   const [description, setDescription] = useState("");
-
+  const [imageURI, setImageURI] = useState("");
   const [allObjectInformation, setAllObjectInformation] = useState([]);
+
+  const [errorMessage, setErrorMessage] = useState(false);
+
+  // --------------- Use camera to take a picture ------------------------------
+  const openCamera = async () => {
+    let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    let pickerResult = await ImagePicker.launchCameraAsync();
+
+    let URIChanged = await copyFile(pickerResult);
+    console.log(URIChanged);
+    setImageURI(URIChanged);
+  };
+
+  // --------------- Copy picture in document folder ------------------------------
+  const copyFile = async (image) => {
+    let fileName = image.uri.substring(
+      image.uri.lastIndexOf("/") + 1,
+      image.uri.length
+    );
+    const uri = `${FileSystem.documentDirectory}${fileName}`;
+
+    await FileSystem.copyAsync({
+      from: image.uri,
+      to: uri,
+    });
+    return uri;
+  };
 
   const onValueChanges = (value) => {
     setPlaces(value);
   };
+
+  // --------------- Add object in JSON file ------------------------------
   const addObject = () => {
     const newObject = [
       ...allObjectInformation,
@@ -64,6 +80,7 @@ export default ({ navigation }) => {
         compartment: compartment,
         furniture: furnitureItem,
         description: description,
+        image: imageURI,
       },
     ];
     setAllObjectInformation(newObject);
@@ -73,81 +90,102 @@ export default ({ navigation }) => {
     setCompartment("");
     setFurnitureItem("");
     setDescription("");
+    setImageURI("");
   };
 
+  // --------------- Allows to add and not replace an object in the JSON --------------------
+  useEffect(() => {
+    readFile(setAllObjectInformation);
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.card}>
-        <View>
-          <Text style={styles.paragraph}>circle picture</Text>
-        </View>
-        <View style={{paddingTop: 10}}>
-          <TextInput 
-            style={styles.paragraph}
-            placeholder="Nom de l'objet"
-            value={name}
-            onChangeText={(newName) => setName(newName)}
-          />
-        </View>
-        <View style={{ paddingLeft: 10, backgroundColor: "#FAF9F6", marginTop: 10, }}>
-          <Form style={{ alignItems: "center" }}>
-            <Picker
-              note
-              mode="dropdown"
-              style={{ width: 150 }}
-              selectedValue={places}
-              onValueChange={onValueChanges.bind(places)}
-            >
-              <Picker.Item label="Lieux" value="Lieux" />
-              {arrayOfPlaces.map((c, index) => (
-                <Picker.Item label={c} value={c} key={index} />
-              ))}
-            </Picker>
-          </Form>
-        </View>
+      <View>
+        <Text
+          style={
+            imageURI.length != 0 ? { color: "grey" } : { color: "#ecf0f1" }
+          }
+        >
+          Photo capturé
+        </Text>
+        <Button title="Prendre une photo" onPress={openCamera} />
+      </View>
 
-        <View>
-          <TextInput
-            style={styles.compartment}
-            placeholder="Compartiment (optionnel)"
-            value={compartment}
-            onChangeText={(objectCompartment) =>
-              setCompartment(objectCompartment)
-            }
-          />
-        </View>
-        <View>
-          <TextInput
-            style={styles.compartment}
-            placeholder="Meuble"
-            value={furnitureItem}
-            onChangeText={(objectFurnitureItem) =>
-              setFurnitureItem(objectFurnitureItem)
-            }
-          />
-        </View>
-        <View>
-          <TextInput
-            multiline = {true}
-            style={styles.description}
-            placeholder="Description complémentaire sur l'objet"
-            onChangeText={(objectDescription) =>
-              setDescription(objectDescription)
-            }
-            value={description}
-          />
-        </View>
-        <View>
-          <Button
-            color="#9E9E9E"
-            title="Créer l'objet"
-            style={styles.buttonHome}
-            onPress={() => {
+      <View>
+        <TextInput
+          style={styles.paragraph}
+          placeholder="Nom de l'objet"
+          value={name}
+          onChangeText={(newName) => setName(newName)}
+        />
+      </View>
+      <View style={{ paddingLeft: 10 }}>
+        <Form style={{ alignItems: "center" }}>
+          <Picker
+            note
+            mode="dropdown"
+            style={{ width: 150 }}
+            selectedValue={places}
+            onValueChange={onValueChanges.bind(places)}
+          >
+            <Picker.Item label="Lieux" value="Lieux" />
+            {arrayOfPlaces.map((c, index) => (
+              <Picker.Item label={c} value={c} key={index} />
+            ))}
+          </Picker>
+        </Form>
+      </View>
+
+      <View>
+        <TextInput
+          style={styles.compartment}
+          placeholder="Compartiment (optionnel)"
+          value={compartment}
+          onChangeText={(objectCompartment) =>
+            setCompartment(objectCompartment)
+          }
+        />
+      </View>
+      <View>
+        <TextInput
+          style={styles.compartment}
+          placeholder="Meuble"
+          value={furnitureItem}
+          onChangeText={(objectFurnitureItem) =>
+            setFurnitureItem(objectFurnitureItem)
+          }
+        />
+      </View>
+      <View>
+        <TextInput
+          style={styles.description}
+          placeholder="Description complémentaire sur l'objet (optionnel)"
+          onChangeText={(objectDescription) =>
+            setDescription(objectDescription)
+          }
+          value={description}
+        />
+      </View>
+      <View>
+        <Button
+          title="Créer l'objet"
+          style={styles.buttonHome}
+          onPress={() => {
+            if (
+              name.length != 0 &&
+              furnitureItem.length != 0 &&
+              places != "Lieux"
+            ) {
               addObject();
               navigation.navigate("Home");
-            }}
-          />
-        </View>
+            } else {
+              setErrorMessage(true);
+            }
+          }}
+        />
+        <Text style={errorMessage ? { color: "red" } : { color: "#ecf0f1" }}>
+          Veuillez vérifier si les champs 'Nom de l'objet', 'Lieux' et 'Meuble'
+          est bien rempli ou correct
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -199,12 +237,3 @@ const styles = StyleSheet.create({
     elevation: 12,
   },
 });
-
-// export default () => {
-
-//   return (
-//     <View >
-//       <Text>Cards</Text>
-//     </View>
-//   );
-// };
