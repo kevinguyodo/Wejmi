@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   TextInput,
@@ -76,73 +77,77 @@ export default ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
-        <Text style={styles.paragraph}>circle picture</Text>
-      </View>
-      <View>
-        <TextInput
-          style={styles.paragraph}
-          placeholder="Nom de l'objet"
-          value={name}
-          onChangeText={(newName) => setName(newName)}
-        />
-      </View>
-      <View style={{ paddingLeft: 10 }}>
-        <Form style={{ alignItems: "center" }}>
-          <Picker
-            note
-            mode="dropdown"
-            style={{ width: 150 }}
-            selectedValue={places}
-            onValueChange={onValueChanges.bind(places)}
-          >
-            <Picker.Item label="Lieux" value="Lieux" />
-            {arrayOfPlaces.map((c, index) => (
-              <Picker.Item label={c} value={c} key={index} />
-            ))}
-          </Picker>
-        </Form>
-      </View>
+      <View style={styles.card}>
+        <View>
+          <Text style={styles.paragraph}>circle picture</Text>
+        </View>
+        <View style={{paddingTop: 10}}>
+          <TextInput 
+            style={styles.paragraph}
+            placeholder="Nom de l'objet"
+            value={name}
+            onChangeText={(newName) => setName(newName)}
+          />
+        </View>
+        <View style={{ paddingLeft: 10, backgroundColor: "#FAF9F6", marginTop: 10, }}>
+          <Form style={{ alignItems: "center" }}>
+            <Picker
+              note
+              mode="dropdown"
+              style={{ width: 150 }}
+              selectedValue={places}
+              onValueChange={onValueChanges.bind(places)}
+            >
+              <Picker.Item label="Lieux" value="Lieux" />
+              {arrayOfPlaces.map((c, index) => (
+                <Picker.Item label={c} value={c} key={index} />
+              ))}
+            </Picker>
+          </Form>
+        </View>
 
-      <View>
-        <TextInput
-          style={styles.compartment}
-          placeholder="Compartiment (optionnel)"
-          value={compartment}
-          onChangeText={(objectCompartment) =>
-            setCompartment(objectCompartment)
-          }
-        />
-      </View>
-      <View>
-        <TextInput
-          style={styles.compartment}
-          placeholder="Meuble"
-          value={furnitureItem}
-          onChangeText={(objectFurnitureItem) =>
-            setFurnitureItem(objectFurnitureItem)
-          }
-        />
-      </View>
-      <View>
-        <TextInput
-          style={styles.description}
-          placeholder="Description complémentaire sur l'objet"
-          onChangeText={(objectDescription) =>
-            setDescription(objectDescription)
-          }
-          value={description}
-        />
-      </View>
-      <View>
-        <Button
-          title="Créer l'objet"
-          style={styles.buttonHome}
-          onPress={() => {
-            addObject();
-            navigation.navigate("Home");
-          }}
-        />
+        <View>
+          <TextInput
+            style={styles.compartment}
+            placeholder="Compartiment (optionnel)"
+            value={compartment}
+            onChangeText={(objectCompartment) =>
+              setCompartment(objectCompartment)
+            }
+          />
+        </View>
+        <View>
+          <TextInput
+            style={styles.compartment}
+            placeholder="Meuble"
+            value={furnitureItem}
+            onChangeText={(objectFurnitureItem) =>
+              setFurnitureItem(objectFurnitureItem)
+            }
+          />
+        </View>
+        <View>
+          <TextInput
+            multiline = {true}
+            style={styles.description}
+            placeholder="Description complémentaire sur l'objet"
+            onChangeText={(objectDescription) =>
+              setDescription(objectDescription)
+            }
+            value={description}
+          />
+        </View>
+        <View>
+          <Button
+            color="#9E9E9E"
+            title="Créer l'objet"
+            style={styles.buttonHome}
+            onPress={() => {
+              addObject();
+              navigation.navigate("Home");
+            }}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -155,24 +160,43 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#ecf0f1",
   },
+  buttonHome: {},
   paragraph: {
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     padding: 20,
+    backgroundColor: "#FAF9F6",
   },
   card: {
     width: 344,
   },
   description: {
-    marginLeft: 10,
-    height: 50,
+    paddingTop: 10,
+    marginTop: 10,
+    backgroundColor: "#FAF9F6",
+    textAlign: "center",
+
   },
   compartment: {
+    
+
     textAlign: "center",
     fontWeight: "bold",
     paddingBottom: 10,
-    paddingTop: 10,
+    backgroundColor: "#FAF9F6",
+  },
+  card: {
+    backgroundColor: "#9E9E9E",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+
+    elevation: 12,
   },
 });
 
