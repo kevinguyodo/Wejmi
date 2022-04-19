@@ -5,7 +5,7 @@ import CreateObject from "./components/CreateObject";
 import ModifyObject from "./components/ModifyObject";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-import ModifyObject from "./components/ModifyObject";
+
 
 
 const { Navigator, Screen } = createNativeStackNavigator();

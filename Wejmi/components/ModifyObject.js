@@ -1,10 +1,10 @@
-import { Text, View } from "react-native";
+import { Text, View , StyleSheet } from "react-native";
 
 import Cards from "./Cards";
 
 export default ({ route }) => {
-  const objectInformation = route.params.object;
-  console.log(objectInformation.name);
+  const objectInformation = route.params;
+  console.log(objectInformation);
   return (
     <View>
       <Cards

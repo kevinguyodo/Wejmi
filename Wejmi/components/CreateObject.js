@@ -110,7 +110,7 @@ export default ({ navigation }) => {
       },
     ];
     storeData(newObject);
-    dataFile(newObject);
+    //dataFile(newObject);
     setAllObjectInformation(newObject);
     createFile(newObject);
     setName("");
