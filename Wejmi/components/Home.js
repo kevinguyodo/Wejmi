@@ -1,4 +1,5 @@
 import { View, Button, StyleSheet, TextInput, ScrollView } from "react-native";
+import { Form, Picker } from "native-base";
 import { useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
 import Cards from "./Cards";
@@ -20,11 +21,27 @@ export const readFile = async (setObject) => {
       return a.name.localeCompare(b.name);
     });
     setObject(contentParse);
+    console.log(contentParse);
   }
 };
+
+export const arrayOfPlaces = [
+  "Salon",
+  "Salle à manger",
+  "Cuisine",
+  "Chambre",
+  "Salle de bain",
+  "Toilettes",
+  "Bureau",
+  "Veranda",
+  "Garage",
+];
+
+export const arrayOfStatus = ["A sa place", "Déplacé temporairement", "Perdu"];
 export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
   const [filterElement, setFilterElement] = useState("");
+  const [statusFilter, setStatusFiltrer] = useState("");
 
   const removeAllObject = () => {
     const newObject = objects.filter((object) => !object.name.length != 0);
@@ -40,6 +57,7 @@ export default ({ navigation }) => {
         object.place = newObject.place;
         object.compartment = newObject.compartment;
         object.furniture = newObject.furniture;
+        object.status = newObject.status;
         object.description = newObject.description;
         object.image = newObject.image;
         setObject([...objects]);
@@ -50,11 +68,13 @@ export default ({ navigation }) => {
 
   // Affichage conditionnel
   const displayCard = (object, index) => {
+    let filter = [];
     const objectElementArray = [
       object.name,
       object.place,
       object.compartment,
       object.furniture,
+      object.status,
       object.description,
     ];
     const card = (
@@ -63,6 +83,7 @@ export default ({ navigation }) => {
         place={object.place}
         compartment={object.compartment}
         furnitureItem={object.furniture}
+        status={object.status}
         description={object.description}
         image={object.image}
         modifyObject={() => {
@@ -71,19 +92,34 @@ export default ({ navigation }) => {
         key={index}
       />
     );
-    if (filterElement.length == 0) {
-      return card;
-    } else {
-      for (
-        let indexArray = 0;
-        indexArray <= objectElementArray.length;
-        indexArray++
-      ) {
-        if (objectElementArray[indexArray] === filterElement) {
-          return card;
-        }
-      }
-    }
+    return card;
+    // if (filterElement.length == 0 && statusFilter.length == 0) {
+    //   return card;
+    // } else {
+    //   for (
+    //     let indexArray = 0;
+    //     indexArray <= objectElementArray.length;
+    //     indexArray++
+    //   ) {
+    //     if (objectElementArray[indexArray] == filterElement) {
+    //       filter.push(objectElementArray[indexArray]);
+    //     }
+    //     if (objectElementArray[index] == statusFilter) {
+    //       filter.push(objectElementArray[indexArray]);
+    //     }
+    //   }
+    //   console.log(filter);
+    //   for (let indextest = 0; indextest <= filter.length; indextest++) {
+    //     console.log(filter);
+    //     // if (filter[indextest] == object.status) {
+    //     //   return card;
+    //     // }
+    //   }
+    // }
+  };
+
+  const changeFilterStatus = (newStatus) => {
+    setStatusFiltrer(newStatus);
   };
 
   useEffect(() => {
@@ -92,7 +128,6 @@ export default ({ navigation }) => {
 
   return (
     <View>
-      {/* -------------------------------------------------------------------------------- */}
       <View style={styles.containHeader}>
         <Button
           style={styles.header}
@@ -110,7 +145,6 @@ export default ({ navigation }) => {
           }}
         />
       </View>
-      {/* -------------------------------------------------------------------------------- */}
 
       <View style={styles.inputTxt}>
         <TextInput
@@ -118,6 +152,21 @@ export default ({ navigation }) => {
           placeholder="Trouve ton objet Marmoud ..."
           onChangeText={(newfilter) => setFilterElement(newfilter)}
         />
+        <Form style={{ alignItems: "center" }}>
+          <Picker
+            note
+            mode="dropdown"
+            style={{ width: 150 }}
+            selectedValue={statusFilter}
+            onValueChange={changeFilterStatus.bind(statusFilter)}
+          >
+            <Picker.Item label="Choisir un marqueur d'objet" value="" />
+            {arrayOfStatus.map((c, index) => (
+              <Picker.Item label={c} value={c} key={index} />
+            ))}
+          </Picker>
+        </Form>
+        {/* <Button onPress={displayCard} /> */}
       </View>
       <View style={{ paddingTop: 10 }}>
         <Button
@@ -127,13 +176,9 @@ export default ({ navigation }) => {
           title="Supprimer tout les objets"
         ></Button>
       </View>
-
-      {/* -------------------------------------------------------------------------------- */}
-
       <ScrollView style={styles.containerHome}>
-        {objects.sort().map((object, index) => displayCard(object, index))}
+        {objects.map((object, index) => displayCard(object, index))}
       </ScrollView>
-      {/* -------------------------------------------------------------------------------- */}
     </View>
   );
 };
@@ -162,57 +207,3 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
 });
-
-// import React, { useState, useEffect } from "react";
-// import { Button, Image, View, Platform } from "react-native";
-// import * as ImagePicker from "expo-image-picker";
-// import * as FileSystem from "expo-file-system";
-
-// export default function ImagePickerExample() {
-//   const openCamera = async () => {
-//     let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-//     if (permissionResult.granted === false) {
-//       alert("Permission to access camera roll is required!");
-//       return;
-//     }
-
-//     let pickerResult = await ImagePicker.launchCameraAsync();
-
-//     let imageURI = await copyFile(pickerResult);
-//     console.log(imageURI);
-//     return imageURI;
-//   };
-
-//   const pickImage = async () => {
-//     // No permissions request is necessary for launching the image library
-//     let pickerResult = await ImagePicker.launchImageLibraryAsync();
-
-//     let imageURI = await copyFile(pickerResult);
-//     return imageURI;
-//   };
-
-//   const copyFile = async (image) => {
-//     let fileName = image.uri.substring(
-//       image.uri.lastIndexOf("/") + 1,
-//       image.uri.length
-//     );
-//     const uri = `${FileSystem.documentDirectory}${fileName}`;
-
-//     await FileSystem.copyAsync({
-//       from: image.uri,
-//       to: uri,
-//     });
-//     return uri;
-//   };
-
-//   return (
-//     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-//       <Button title="Pick an image from camera roll" onPress={openCamera} />
-//       <Button title="Pick image from library" onPress={pickImage} />
-//       {/* {image && (
-//         <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-//       )} */}
-//     </View>
-//   );
-// }

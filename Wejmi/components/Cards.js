@@ -1,12 +1,14 @@
 import { StyleSheet } from "react-native-web";
 import { Card, Title, Paragraph } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
+import { arrayOfStatus } from "./Home";
 
 export default ({
   name,
   place,
   compartment,
   furnitureItem,
+  status,
   description,
   image,
   modifyObject,
@@ -31,14 +33,25 @@ export default ({
       );
     }
   };
+
+  const statusEmoticon = () => {
+    if (status === arrayOfStatus[0]) {
+      return <Title>{name} 🟢</Title>;
+    } else if (status === arrayOfStatus[1]) {
+      return <Title>{name} 🟡</Title>;
+    } else {
+      return <Title>{name} 🔴</Title>;
+    }
+  };
   return (
     <TouchableOpacity onLongPress={modifyObject}>
       <Card style={styles.card}>
+        <Card.Content>{statusEmoticon()}</Card.Content>
         <Card.Content>
-          <Title>{name}</Title>
           {displayParagraph("Endroit", place)}
           {displayParagraph("Compartiment", compartment)}
           {displayParagraph("Meuble", furnitureItem)}
+          {displayParagraph("Status", status)}
           {displayParagraph("Description", description)}
         </Card.Content>
         {displayImage()}
