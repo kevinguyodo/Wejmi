@@ -1,4 +1,4 @@
-import React, { useState, useEffect, AsyncStorage } from "react";
+import { useState, useEffect } from "react";
 import {
   TextInput,
   SafeAreaView,
@@ -6,40 +6,17 @@ import {
   View,
   Button,
   Text,
-  Image,
 } from "react-native";
 import { Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-
-
-const fileURI = FileSystem.documentDirectory + "Wejmi.json";
-
-// Create and write in json
-const createFile = async (object) => {
-  await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(object));
-};
-
-// uri can be different JSON file
-const fileExists = async (uri) => {
-  return (await FileSystem.getInfoAsync(uri)).exists;
-};
+import { readFile, createFile } from "./Home";
 
 const storeData = async (object) => {
   return (await AsyncStorage.setItem("@fileURI", JSON.stringify(object)));
 };
 
 export default ({ navigation }) => {
-  const readFile = async () => {
-    if (await fileExists(fileURI)) {
-      const content = await FileSystem.readAsStringAsync(fileURI);
-      setAllObjectInformation(JSON.parse(content));
-    }
-  };
-  useEffect(() => {
-    readFile();
-  }, []);
-
   const arrayOfPlaces = [
     "Salon",
     "Salle à manger",
@@ -51,14 +28,13 @@ export default ({ navigation }) => {
     "Veranda",
     "Garage",
   ];
+  // --------------- Creation of all Hooks ------------------------------
   const [name, setName] = useState("");
-
   const [places, setPlaces] = useState("");
   const [compartment, setCompartment] = useState("");
   const [furnitureItem, setFurnitureItem] = useState("");
   const [description, setDescription] = useState("");
   const [imageURI, setImageURI] = useState("");
-
   const [allObjectInformation, setAllObjectInformation] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState(false);
@@ -97,6 +73,8 @@ export default ({ navigation }) => {
   const onValueChanges = (value) => {
     setPlaces(value);
   };
+
+  // --------------- Add object in JSON file ------------------------------
   const addObject = () => {
     const newObject = [
       ...allObjectInformation,
@@ -121,6 +99,10 @@ export default ({ navigation }) => {
     setImageURI("");
   };
 
+  // --------------- Allows to add and not replace an object in the JSON --------------------
+  useEffect(() => {
+    readFile(setAllObjectInformation);
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <View>

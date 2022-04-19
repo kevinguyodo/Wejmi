@@ -1,14 +1,4 @@
-import {
-  View,
-  Button,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { Card, Title, Paragraph } from "react-native-paper";
-import CreateObject from "./CreateObject";
-import ModifyObject from "./ModifyObject";
+import { View, Button, StyleSheet, TextInput, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
 import Cards from "./Cards";
@@ -17,19 +7,24 @@ const fileURI = FileSystem.documentDirectory + "Wejmi.json";
 const fileExists = async (uri) => {
   return (await FileSystem.getInfoAsync(uri)).exists;
 };
-const createFile = async (object) => {
+export const createFile = async (object) => {
   await FileSystem.writeAsStringAsync(fileURI, JSON.stringify(object));
 };
 
+export const readFile = async (setObject) => {
+  if (await fileExists(fileURI)) {
+    const content = await FileSystem.readAsStringAsync(fileURI);
+    const contentParse = JSON.parse(content);
+    // --------------- Automatically sorts in alphabetical order -------------------------------
+    contentParse.sort(function (a, b) {
+      return a.name.localeCompare(b.name);
+    });
+    setObject(contentParse);
+  }
+};
 export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
-  const readFile = async () => {
-    if (await fileExists(fileURI)) {
-      const content = await FileSystem.readAsStringAsync(fileURI);
-      setObject(JSON.parse(content));
-      console.log(JSON.parse(content));
-    }
-  };
+  const [filterElement, setFilterElement] = useState("");
 
   const removeAllObject = () => {
     const newObject = objects.filter((object) => !object.name.length != 0);
@@ -53,8 +48,46 @@ export default ({ navigation }) => {
     });
   };
 
+  // Affichage conditionnel
+  const displayCard = (object, index) => {
+    const objectElementArray = [
+      object.name,
+      object.place,
+      object.compartment,
+      object.furniture,
+      object.description,
+    ];
+    const card = (
+      <Cards
+        name={object.name}
+        place={object.place}
+        compartment={object.compartment}
+        furnitureItem={object.furniture}
+        description={object.description}
+        image={object.image}
+        modifyObject={() => {
+          modifyObject(object);
+        }}
+        key={index}
+      />
+    );
+    if (filterElement.length == 0) {
+      return card;
+    } else {
+      for (
+        let indexArray = 0;
+        indexArray <= objectElementArray.length;
+        indexArray++
+      ) {
+        if (objectElementArray[indexArray] === filterElement) {
+          return card;
+        }
+      }
+    }
+  };
+
   useEffect(() => {
-    readFile();
+    readFile(setObject);
   }, []);
 
   return (
@@ -70,10 +103,10 @@ export default ({ navigation }) => {
           color="#616161"
         ></Button>
         <Button
-          title="Information JSON"
+          title="Refresh"
           color="black"
           onPress={() => {
-            readFile();
+            readFile(setObject);
           }}
         />
       </View>
@@ -83,7 +116,10 @@ export default ({ navigation }) => {
         <TextInput
           style={{ height: 40, paddingLeft: 10 }}
           placeholder="Trouve ton objet Marmoud ..."
+          onChangeText={(newfilter) => setFilterElement(newfilter)}
         />
+      </View>
+      <View style={{ paddingTop: 10 }}>
         <Button
           onPress={() => {
             removeAllObject();
@@ -95,26 +131,7 @@ export default ({ navigation }) => {
       {/* -------------------------------------------------------------------------------- */}
 
       <ScrollView style={styles.containerHome}>
-        {objects.map((object, index) => (
-          <Cards
-            name={object.name}
-            place={object.place}
-            compartment={object.compartment}
-            furnitureItem={object.furniture}
-            description={object.description}
-            image={object.image}
-            modifyObject={() => {
-              modifyObject(object);
-            }}
-            key={index}
-          />
-        ))}
-        <Button 
-          title="modifier" 
-          onPress={() => {
-          navigation.navigate("Modify");
-          }}
-        />
+        {objects.sort().map((object, index) => displayCard(object, index))}
       </ScrollView>
       {/* -------------------------------------------------------------------------------- */}
     </View>
