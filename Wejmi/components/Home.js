@@ -1,4 +1,11 @@
-import { View, Button, StyleSheet, TextInput, ScrollView } from "react-native";
+import {
+  View,
+  Button,
+  StyleSheet,
+  TextInput,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
 import { Form, Picker } from "native-base";
 import { useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
@@ -74,7 +81,7 @@ export default ({ navigation }) => {
       object.place,
       object.compartment,
       object.furniture,
-      object.status,
+      // object.status,
       object.description,
     ];
     const card = (
@@ -92,7 +99,31 @@ export default ({ navigation }) => {
         key={index}
       />
     );
-    return card;
+    if (filterElement.length == 0 && statusFilter.length == 0) {
+      return card;
+    } else {
+      if (filterElement.length != 0 && statusFilter.length == 0) {
+        for (let index = 0; index <= objectElementArray.length; index++) {
+          if (filterElement == objectElementArray[index]) {
+            return card;
+          }
+        }
+      } else if (filterElement.length == 0 && statusFilter.length != 0) {
+        if (statusFilter == object.status) {
+          return card;
+        }
+      } else {
+        for (let index = 0; index <= objectElementArray.length; index++) {
+          if (
+            filterElement == objectElementArray[index] &&
+            statusFilter == object.status
+          ) {
+            return card;
+          }
+        }
+      }
+    }
+    // return card;
     // if (filterElement.length == 0 && statusFilter.length == 0) {
     //   return card;
     // } else {
@@ -127,7 +158,7 @@ export default ({ navigation }) => {
   }, []);
 
   return (
-    <View>
+    <ScrollView>
       <View style={styles.containHeader}>
         <Button
           style={styles.header}
@@ -176,10 +207,10 @@ export default ({ navigation }) => {
           title="Supprimer tout les objets"
         ></Button>
       </View>
-      <ScrollView style={styles.containerHome}>
-        {objects.map((object, index) => displayCard(object, index))}
-      </ScrollView>
-    </View>
+      {/* <ScrollView style={styles.containerHome}> */}
+      {objects.map((object, index) => displayCard(object, index))}
+      {/* </ScrollView> */}
+    </ScrollView>
   );
 };
 

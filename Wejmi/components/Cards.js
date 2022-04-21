@@ -53,8 +53,8 @@ export default ({
           {displayParagraph("Meuble", furnitureItem)}
           {displayParagraph("Status", status)}
           {displayParagraph("Description", description)}
+          {displayImage()}
         </Card.Content>
-        {displayImage()}
       </Card>
     </TouchableOpacity>
   );
