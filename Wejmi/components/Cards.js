@@ -20,6 +20,7 @@ export default ({
     } else {
       return <Card.Cover source={{ uri: image }} />;
     }
+   
   };
 
   const displayParagraph = (objectElement, value) => {

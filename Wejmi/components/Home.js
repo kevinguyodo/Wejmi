@@ -51,9 +51,10 @@ export default ({ navigation }) => {
   const [statusFilter, setStatusFiltrer] = useState("");
 
   const removeAllObject = () => {
-    const newObject = objects.filter((object) => !object.name.length != 0);
+    const newObject = objects.filter((object) => !object.name.length == 0);
     setObject(newObject);
     createFile(newObject);
+
   };
 
   const modifyObject = (object) => {
