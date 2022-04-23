@@ -10,29 +10,19 @@ import {
 import { Picker, Form } from "native-base";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
-import { readFile, createFile } from "./Home";
+import { readFile, createFile, arrayOfPlaces, arrayOfStatus } from "./Home";
 
 const storeData = async (object) => {
   return (await AsyncStorage.setItem("@fileURI", JSON.stringify(object)));
 };
 
 export default ({ navigation }) => {
-  const arrayOfPlaces = [
-    "Salon",
-    "Salle à manger",
-    "Cuisine",
-    "Chambre",
-    "Salle de bain",
-    "Toilettes",
-    "Bureau",
-    "Veranda",
-    "Garage",
-  ];
   // --------------- Creation of all Hooks ------------------------------
   const [name, setName] = useState("");
   const [places, setPlaces] = useState("");
   const [compartment, setCompartment] = useState("");
   const [furnitureItem, setFurnitureItem] = useState("");
+  const [status, setStatus] = useState(arrayOfStatus[0]);
   const [description, setDescription] = useState("");
   const [imageURI, setImageURI] = useState("");
   const [allObjectInformation, setAllObjectInformation] = useState([]);
@@ -70,8 +60,11 @@ export default ({ navigation }) => {
     return uri;
   };
 
-  const onValueChanges = (value) => {
-    setPlaces(value);
+  const onPlacesChanges = (newPlaces) => {
+    setPlaces(newPlaces);
+  };
+  const onStatusChanges = (newStatus) => {
+    setStatus(newStatus);
   };
 
   // --------------- Add object in JSON file ------------------------------
@@ -83,6 +76,7 @@ export default ({ navigation }) => {
         place: places,
         compartment: compartment,
         furniture: furnitureItem,
+        status: status,
         description: description,
         image: imageURI,
       },
@@ -95,7 +89,7 @@ export default ({ navigation }) => {
     setPlaces("");
     setCompartment("");
     setFurnitureItem("");
-    setDescription("");
+    setStatus(arrayOfStatus[0]), setDescription("");
     setImageURI("");
   };
 
@@ -131,7 +125,7 @@ export default ({ navigation }) => {
             mode="dropdown"
             style={{ width: 150 }}
             selectedValue={places}
-            onValueChange={onValueChanges.bind(places)}
+            onValueChange={onPlacesChanges.bind(places)}
           >
             <Picker.Item label="Lieux" value="Lieux" />
             {arrayOfPlaces.map((c, index) => (
@@ -161,6 +155,24 @@ export default ({ navigation }) => {
           }
         />
       </View>
+      {/* Placer le status de l'objet  */}
+
+      <View style={{ paddingLeft: 10 }}>
+        <Form style={{ alignItems: "center" }}>
+          <Picker
+            note
+            mode="dropdown"
+            style={{ width: 150 }}
+            selectedValue={status}
+            onValueChange={onStatusChanges.bind(status)}
+          >
+            {arrayOfStatus.map((c, index) => (
+              <Picker.Item label={c} value={c} key={index} />
+            ))}
+          </Picker>
+        </Form>
+      </View>
+
       <View>
         <TextInput
           style={styles.description}
