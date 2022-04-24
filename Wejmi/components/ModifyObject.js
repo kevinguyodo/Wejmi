@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   TextInput,
   SafeAreaView,
@@ -8,139 +8,129 @@ import {
   Text,
 } from "react-native";
 import { Picker, Form } from "native-base";
-import * as FileSystem from "expo-file-system";
-import * as ImagePicker from "expo-image-picker";
-import { readFile, createFile, arrayOfPlaces, arrayOfStatus } from "./Home";
-import Cards from "./Cards";
+import { createFile, openCamera, arrayOfPlaces, arrayOfStatus } from "./Home";
 
-
-
-const storeData = async (object) => {
-  return (await AsyncStorage.setItem("@fileURI", JSON.stringify(object)));
-};
-
-
-export default ({ route }) => {
+export default ({ route, navigation }) => {
   const objectInformation = route.params.object;
-  console.log(objectInformation);
-
-  const [name, setName] = useState("");
-  const [places, setPlaces] = useState("");
-  const [compartment, setCompartment] = useState("");
-  const [furnitureItem, setFurnitureItem] = useState("");
-  const [status, setStatus] = useState(arrayOfStatus[0]);
-  const [description, setDescription] = useState("");
-  const [imageURI, setImageURI] = useState("");
-  const [allObjectInformation, setAllObjectInformation] = useState([]);
-
+  const [newName, setNewName] = useState(objectInformation.name);
+  const [newPlaces, setNewPlaces] = useState(objectInformation.place);
+  const [newCompartment, setNewCompartment] = useState(
+    objectInformation.compartment
+  );
+  const [newFurnitureItem, setNewFurnitureItem] = useState(
+    objectInformation.furniture
+  );
+  const [newStatus, setNewStatus] = useState(objectInformation.status);
+  const [newDescription, setNewDescription] = useState(
+    objectInformation.description
+  );
+  const [newImageURI, setNewImageURI] = useState(objectInformation.image);
+  const [newObjectInformation, setNewObjectInformation] = useState([]);
   const [errorMessage, setErrorMessage] = useState(false);
 
   const onPlacesChanges = (newPlaces) => {
-    setPlaces(newPlaces);
+    setNewPlaces(newPlaces);
   };
   const onStatusChanges = (newStatus) => {
-    setStatus(newStatus);
+    setNewStatus(newStatus);
   };
 
-  const modifyObject = () => {
+  // --------------- Add object in JSON file ------------------------------
+  const addNewObject = () => {
     const newObject = [
-      ...allObjectInformation,
+      ...newObjectInformation,
       {
-        name: name,
-        place: places,
-        compartment: compartment,
-        furniture: furnitureItem,
-        status: status,
-        description: description,
-        image: imageURI,
+        name: newName,
+        place: newPlaces,
+        compartment: newCompartment,
+        furniture: newFurnitureItem,
+        status: newStatus,
+        description: newDescription,
+        image: newImageURI,
       },
     ];
-    storeData(newObject);
-    //dataFile(newObject);
-    setAllObjectInformation(newObject);
+    setNewObjectInformation(newObject);
     createFile(newObject);
-    setName("");
-    setPlaces("");
-    setCompartment("");
-    setFurnitureItem("");
-    setStatus(arrayOfStatus[0]), setDescription("");
-    setImageURI("");
+    setNewName("");
+    setNewPlaces("");
+    setNewCompartment("");
+    setNewFurnitureItem("");
+    setNewStatus(arrayOtfStatus[0]), setNewDescription("");
+    setNewImageURI("");
   };
-  useEffect(() => {
-    modifyObject(setAllObjectInformation);
-  }, []);
-
-
-  // const Modify = JSON.stringify(modifyObject);
-
   return (
-    <SafeAreaView>
+    <SafeAreaView  style={styles.container}>
       <View>
-        <Cards
-          name={objectInformation.name}
-          place={objectInformation.place}
-          compartment={objectInformation.compartment}
-          furnitureItem={objectInformation.furniture}
-          status={objectInformation.status}
-          description={objectInformation.description}
-          image={objectInformation.image}
-        ></Cards>
-      </View>
-
-      <View>
-        <TextInput
-          style={styles.paragraph}
-          placeholder="Nom de l'objet"
-          value={name}
-          onChangeText={(newName) => setName(newName)}
+        <Text
+          style={
+            objectInformation.image != newImageURI
+              ? { color: "grey" }
+              : { color: "#ecf0f1" }
+          }
+        >
+          Nouvelle photo capturé
+        </Text>
+        <Button
+          color="#616161"
+          title="Prendre une photo"
+          onPress={() => {
+            openCamera(setNewImageURI);
+          }}
         />
       </View>
+      <TextInput
+        style={styles.paragraph}
+        placeholder={newName}
+        value={newName}
+        onChangeText={(name) => setNewName(name)}
+      />
       <View style={{ paddingLeft: 10 }}>
         <Form style={{ alignItems: "center" }}>
           <Picker
             note
             mode="dropdown"
             style={{ width: 150 }}
-            selectedValue={places}
-            onValueChange={onPlacesChanges.bind(places)}
+            selectedValue={newPlaces}
+            onValueChange={onPlacesChanges.bind(newPlaces)}
           >
-            <Picker.Item label="Lieux" value="Lieux" />
+            <Picker.Item
+              label={objectInformation.place}
+              value={objectInformation.place}
+            />
             {arrayOfPlaces.map((c, index) => (
               <Picker.Item label={c} value={c} key={index} />
             ))}
           </Picker>
         </Form>
       </View>
-
       <View>
         <TextInput
           style={styles.compartment}
-          placeholder="Compartiment (optionnel)"
-          value={compartment}
+          placeholder="{objectInformation.compartment}"
+          value={newCompartment}
           onChangeText={(objectCompartment) =>
-            setCompartment(objectCompartment)
+            setNewCompartment(objectCompartment)
           }
         />
       </View>
-      <View>
+      <View >
         <TextInput
           style={styles.compartment}
-          placeholder="Meuble"
-          value={furnitureItem}
+          placeholder={newFurnitureItem}
+          value={newFurnitureItem}
           onChangeText={(objectFurnitureItem) =>
-            setFurnitureItem(objectFurnitureItem)
+            setNewFurnitureItem(objectFurnitureItem)
           }
         />
       </View>
-    
       <View style={{ paddingLeft: 10 }}>
         <Form style={{ alignItems: "center" }}>
           <Picker
             note
             mode="dropdown"
             style={{ width: 150 }}
-            selectedValue={status}
-            onValueChange={onStatusChanges.bind(status)}
+            selectedValue={newStatus}
+            onValueChange={onStatusChanges.bind(newStatus)}
           >
             {arrayOfStatus.map((c, index) => (
               <Picker.Item label={c} value={c} key={index} />
@@ -148,29 +138,38 @@ export default ({ route }) => {
           </Picker>
         </Form>
       </View>
-
       <View>
         <TextInput
-          style={styles.description}
-          placeholder="Description complémentaire sur l'objet (optionnel)"
+          style={styles.compartment}
+          placeholder="{objectInformation.description}"
           onChangeText={(objectDescription) =>
-            setDescription(objectDescription)
+            setNewDescription(objectDescription)
           }
-          value={description}
+          value={newDescription}
         />
       </View>
-
-
       <View>
         <Button
-            title="Modifier l'objet"
-            style={styles.buttonHome}
-            onPress={() => {
-                modifyObject();
-                route.navigate("Home");
-              }
+          color="#616161"
+          title="Créer l'objet"
+          style={styles.buttonHome}
+          onPress={() => {
+            if (
+              newName.length != 0 &&
+              newFurnitureItem.length != 0 &&
+              newPlaces != "Lieux"
+            ) {
+              addNewObject();
+              navigation.navigate("Home");
+            } else {
+              setErrorMessage(true);
             }
-          />
+          }}
+        />
+        <Text style={errorMessage ? { color: "red" } : { color: "#ecf0f1" }}>
+          Veuillez vérifier si les champs 'Nom de l'objet', 'Lieux' et 'Meuble'
+          est bien rempli ou correct
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -179,28 +178,39 @@ export default ({ route }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginLeft: 20,
+    marginRight: 20,
+    borderWidth: 2,
+    borderColor: "#212121",
+  backgroundColor: "#ecf0f1",
+    marginTop:100,
     justifyContent: "center",
-    padding: 20,
+    padding: 50,
     backgroundColor: "#ecf0f1",
   },
   paragraph: {
+    borderWidth: 1,
+    marginTop: 3,
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     padding: 20,
+    
   },
   card: {
     width: 344,
   },
   description: {
+    
     marginLeft: 10,
     height: 50,
   },
   compartment: {
+    borderWidth: 1,
     textAlign: "center",
     fontWeight: "bold",
     paddingBottom: 10,
     paddingTop: 10,
+    marginTop: 3,
   },
 });

@@ -8,9 +8,13 @@ import {
   Text,
 } from "react-native";
 import { Picker, Form } from "native-base";
-import * as FileSystem from "expo-file-system";
-import * as ImagePicker from "expo-image-picker";
-import { readFile, createFile, arrayOfPlaces, arrayOfStatus } from "./Home";
+import {
+  readFile,
+  openCamera,
+  createFile,
+  arrayOfPlaces,
+  arrayOfStatus,
+} from "./Home";
 
 const storeData = async (object) => {
   return (await AsyncStorage.setItem("@fileURI", JSON.stringify(object)));
@@ -28,37 +32,6 @@ export default ({ navigation }) => {
   const [allObjectInformation, setAllObjectInformation] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState(false);
-
-  // --------------- Use camera to take a picture ------------------------------
-  const openCamera = async () => {
-    let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      alert("Permission to access camera roll is required!");
-      return;
-    }
-
-    let pickerResult = await ImagePicker.launchCameraAsync();
-
-    let URIChanged = await copyFile(pickerResult);
-    console.log(URIChanged);
-    setImageURI(URIChanged);
-  };
-
-  // --------------- Copy picture in document folder ------------------------------
-  const copyFile = async (image) => {
-    let fileName = image.uri.substring(
-      image.uri.lastIndexOf("/") + 1,
-      image.uri.length
-    );
-    const uri = `${FileSystem.documentDirectory}${fileName}`;
-
-    await FileSystem.copyAsync({
-      from: image.uri,
-      to: uri,
-    });
-    return uri;
-  };
 
   const onPlacesChanges = (newPlaces) => {
     setPlaces(newPlaces);
@@ -81,10 +54,9 @@ export default ({ navigation }) => {
         image: imageURI,
       },
     ];
-    storeData(newObject);
-    //dataFile(newObject);
     setAllObjectInformation(newObject);
     createFile(newObject);
+
     setName("");
     setPlaces("");
     setCompartment("");
@@ -107,7 +79,13 @@ export default ({ navigation }) => {
         >
           Photo capturé
         </Text>
-        <Button title="Prendre une photo" onPress={openCamera} />
+        <Button
+          color="#616161"
+          title="Prendre une photo"
+          onPress={() => {
+            openCamera(setImageURI);
+          }}
+        />
       </View>
 
       <View>
@@ -155,7 +133,6 @@ export default ({ navigation }) => {
           }
         />
       </View>
-      {/* Placer le status de l'objet  */}
 
       <View style={{ paddingLeft: 10 }}>
         <Form style={{ alignItems: "center" }}>
@@ -185,6 +162,7 @@ export default ({ navigation }) => {
       </View>
       <View>
         <Button
+          color="#616161"
           title="Créer l'objet"
           style={styles.buttonHome}
           onPress={() => {
@@ -211,28 +189,53 @@ export default ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    borderWidth: 2,
+      borderColor: "#212121",
+    marginTop: 100,
     justifyContent: "center",
-    padding: 20,
+    padding: 50,
     backgroundColor: "#ecf0f1",
+    marginLeft: 20,
+    marginRight: 20,
   },
+  buttonHome: {},
   paragraph: {
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     padding: 20,
+    backgroundColor: "#FAF9F6",
   },
   card: {
     width: 344,
   },
   description: {
-    marginLeft: 10,
-    height: 50,
+    paddingTop: 10,
+    marginTop: 10,
+    backgroundColor: "#FAF9F6",
+    textAlign: "center",
+    fontWeight: "bold",
+
   },
   compartment: {
+    
+
     textAlign: "center",
     fontWeight: "bold",
     paddingBottom: 10,
-    paddingTop: 10,
+    backgroundColor: "#FAF9F6",
+  },
+  card: {
+    
+    backgroundColor: "#9E9E9E",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+
+    elevation: 12,
   },
 });

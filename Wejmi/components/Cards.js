@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { arrayOfStatus } from "./Home";
 
 export default ({
+  id,
   name,
   place,
   compartment,
@@ -12,6 +13,7 @@ export default ({
   description,
   image,
   modifyObject,
+  removeObject,
 }) => {
   // Affichage conditionnel
   const displayImage = () => {
@@ -20,6 +22,7 @@ export default ({
     } else {
       return <Card.Cover source={{ uri: image }} />;
     }
+   
   };
 
   const displayParagraph = (objectElement, value) => {
@@ -36,7 +39,11 @@ export default ({
 
   const statusEmoticon = () => {
     if (status === arrayOfStatus[0]) {
-      return <Title>{name} 🟢</Title>;
+      return (
+        <Title>
+          {id} - {name} 🟢
+        </Title>
+      );
     } else if (status === arrayOfStatus[1]) {
       return <Title>{name} 🟡</Title>;
     } else {
@@ -44,10 +51,10 @@ export default ({
     }
   };
   return (
-    <TouchableOpacity onLongPress={modifyObject}>
-      <Card style={styles.card}>
+    <TouchableOpacity onPress={modifyObject} onLongPress={removeObject}>
+      <Card style={{backgroundColor:"#ecf0f1", marginLeft:10, marginRight:10, marginTop:10,marginBottom:5, borderWidth: 2, borderColor: "#212121",}}>
         <Card.Content>{statusEmoticon()}</Card.Content>
-        <Card.Content>
+        <Card.Content >
           {displayParagraph("Endroit", place)}
           {displayParagraph("Compartiment", compartment)}
           {displayParagraph("Meuble", furnitureItem)}
@@ -59,12 +66,4 @@ export default ({
     </TouchableOpacity>
   );
 };
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#9E9E9E",
-    marginLeft: 10,
-    marginRight: 10,
-    padding: 20,
-    marginVertical: 10,
-  },
-});
+
