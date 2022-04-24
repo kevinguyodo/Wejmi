@@ -77,6 +77,7 @@ export default ({ navigation }) => {
           Photo capturé
         </Text>
         <Button
+          color="#616161"
           title="Prendre une photo"
           onPress={() => {
             openCamera(setImageURI);
@@ -158,6 +159,7 @@ export default ({ navigation }) => {
       </View>
       <View>
         <Button
+          color="#616161"
           title="Créer l'objet"
           style={styles.buttonHome}
           onPress={() => {
@@ -184,10 +186,14 @@ export default ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    borderWidth: 2,
+      borderColor: "#212121",
+    marginTop: 100,
     justifyContent: "center",
-    padding: 20,
+    padding: 50,
     backgroundColor: "#ecf0f1",
+    marginLeft: 20,
+    marginRight: 20,
   },
   buttonHome: {},
   paragraph: {
@@ -205,6 +211,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: "#FAF9F6",
     textAlign: "center",
+    fontWeight: "bold",
 
   },
   compartment: {
@@ -216,6 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF9F6",
   },
   card: {
+    
     backgroundColor: "#9E9E9E",
     shadowColor: "#000",
     shadowOffset: {

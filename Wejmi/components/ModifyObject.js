@@ -59,7 +59,7 @@ export default ({ route, navigation }) => {
     setNewImageURI("");
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView  style={styles.container}>
       <View>
         <Text
           style={
@@ -71,6 +71,7 @@ export default ({ route, navigation }) => {
           Nouvelle photo capturé
         </Text>
         <Button
+          color="#616161"
           title="Prendre une photo"
           onPress={() => {
             openCamera(setNewImageURI);
@@ -112,7 +113,7 @@ export default ({ route, navigation }) => {
           }
         />
       </View>
-      <View>
+      <View >
         <TextInput
           style={styles.compartment}
           placeholder={newFurnitureItem}
@@ -149,6 +150,7 @@ export default ({ route, navigation }) => {
       </View>
       <View>
         <Button
+          color="#616161"
           title="Créer l'objet"
           style={styles.buttonHome}
           onPress={() => {
@@ -175,28 +177,39 @@ export default ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginLeft: 20,
+    marginRight: 20,
+    borderWidth: 2,
+    borderColor: "#212121",
+  backgroundColor: "#ecf0f1",
+    marginTop:100,
     justifyContent: "center",
-    padding: 20,
+    padding: 50,
     backgroundColor: "#ecf0f1",
   },
   paragraph: {
+    borderWidth: 1,
+    marginTop: 3,
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     padding: 20,
+    
   },
   card: {
     width: 344,
   },
   description: {
+    
     marginLeft: 10,
     height: 50,
   },
   compartment: {
+    borderWidth: 1,
     textAlign: "center",
     fontWeight: "bold",
     paddingBottom: 10,
     paddingTop: 10,
+    marginTop: 3,
   },
 });

@@ -52,9 +52,9 @@ export default ({
   };
   return (
     <TouchableOpacity onPress={modifyObject} onLongPress={removeObject}>
-      <Card style={styles.card}>
+      <Card style={{backgroundColor:"#ecf0f1", marginLeft:10, marginRight:10, marginTop:10,marginBottom:5, borderWidth: 2, borderColor: "#212121",}}>
         <Card.Content>{statusEmoticon()}</Card.Content>
-        <Card.Content>
+        <Card.Content >
           {displayParagraph("Endroit", place)}
           {displayParagraph("Compartiment", compartment)}
           {displayParagraph("Meuble", furnitureItem)}
@@ -66,12 +66,4 @@ export default ({
     </TouchableOpacity>
   );
 };
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#9E9E9E",
-    marginLeft: 10,
-    marginRight: 10,
-    padding: 20,
-    marginVertical: 10,
-  },
-});
+

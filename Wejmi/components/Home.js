@@ -167,9 +167,8 @@ export default ({ navigation }) => {
 
   return (
     <ScrollView>
-      <View style={styles.containHeader}>
+      <View style={{marginTop:20, marginLeft:20, marginRight:20}} >
         <Button
-          style={styles.header}
           title="Enregistrer un objet"
           onPress={() => {
             navigation.navigate("Create");
@@ -177,13 +176,14 @@ export default ({ navigation }) => {
           color="#616161"
         ></Button>
         <Button
-          title="Refresh"
-          color="black"
+          title="Acualiser"
+          color="#616161"
           onPress={() => {
             readFile(setObject);
           }}
         />
       </View>
+      
 
       <View style={styles.inputTxt}>
         <TextInput
@@ -206,8 +206,9 @@ export default ({ navigation }) => {
           </Picker>
         </Form>
       </View>
-      <View style={{ paddingTop: 10 }}>
+      <View style={{ paddingTop: 20,marginLeft:20, marginRight:20 }}>
         <Button
+           color="#616161"
           onPress={() => {
             removeAllObject();
           }}
@@ -221,9 +222,10 @@ export default ({ navigation }) => {
 
 const styles = StyleSheet.create({
   containHeader: {
-    marginRight: 200,
-    marginLeft: 10,
+    marginRight: 100,
+    marginLeft: 100,
     marginTop: 20,
+    paddingBottom: 10,
   },
 
   inputTxt: {
