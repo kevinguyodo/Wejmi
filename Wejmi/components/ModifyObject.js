@@ -8,7 +8,7 @@ import {
   Text,
 } from "react-native";
 import { Picker, Form } from "native-base";
-import { createFile, openCamera, arrayOfPlaces, arrayOfStatus } from "./Home";
+import { openCamera, arrayOfPlaces, arrayOfStatus } from "./Home";
 
 export default ({ route, navigation }) => {
   const objectInformation = route.params.object;
@@ -59,7 +59,7 @@ export default ({ route, navigation }) => {
     setNewImageURI("");
   };
   return (
-    <SafeAreaView  style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View>
         <Text
           style={
@@ -113,7 +113,7 @@ export default ({ route, navigation }) => {
           }
         />
       </View>
-      <View >
+      <View>
         <TextInput
           style={styles.compartment}
           placeholder={newFurnitureItem}
@@ -181,8 +181,8 @@ const styles = StyleSheet.create({
     marginRight: 20,
     borderWidth: 2,
     borderColor: "#212121",
-  backgroundColor: "#ecf0f1",
-    marginTop:100,
+    backgroundColor: "#ecf0f1",
+    marginTop: 100,
     justifyContent: "center",
     padding: 50,
     backgroundColor: "#ecf0f1",
@@ -194,13 +194,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     padding: 20,
-    
   },
   card: {
     width: 344,
   },
   description: {
-    
     marginLeft: 10,
     height: 50,
   },

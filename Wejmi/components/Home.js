@@ -72,12 +72,6 @@ export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
   const [filterElement, setFilterElement] = useState("");
   const [statusFilter, setStatusFiltrer] = useState("");
-  const removeAllObject = () => {
-    const newObject = objects.filter((object) => !object.name.length == 0);
-    setObject(newObject);
-    createFile(newObject);
-
-  };
 
   const removeOneObject = (obj) => {
     const allObject = setObject((objects) =>
@@ -167,7 +161,7 @@ export default ({ navigation }) => {
 
   return (
     <ScrollView>
-      <View style={{marginTop:20, marginLeft:20, marginRight:20}} >
+      <View style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
         <Button
           title="Enregistrer un objet"
           onPress={() => {
@@ -175,10 +169,9 @@ export default ({ navigation }) => {
           }}
           color="#616161"
         ></Button>
-        
       </View>
-      <View style={{marginTop:20, marginLeft:20, marginRight:20}}>
-      <Button
+      <View style={{ marginTop: 20, marginLeft: 20, marginRight: 20 }}>
+        <Button
           title="Acualiser"
           color="#616161"
           onPress={() => {
@@ -186,7 +179,6 @@ export default ({ navigation }) => {
           }}
         />
       </View>
-      
 
       <View style={styles.inputTxt}>
         <TextInput
@@ -209,9 +201,7 @@ export default ({ navigation }) => {
           </Picker>
         </Form>
       </View>
-      <View style={{ paddingTop: 20,marginLeft:20, marginRight:20 }}>
-    
-      </View>
+      <View style={{ paddingTop: 20, marginLeft: 20, marginRight: 20 }}></View>
       {objects.map((object, index) => displayCard(object, index))}
     </ScrollView>
   );
