@@ -175,7 +175,10 @@ export default ({ navigation }) => {
           }}
           color="#616161"
         ></Button>
-        <Button
+        
+      </View>
+      <View style={{marginTop:20, marginLeft:20, marginRight:20}}>
+      <Button
           title="Acualiser"
           color="#616161"
           onPress={() => {
