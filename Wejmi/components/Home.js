@@ -207,13 +207,7 @@ export default ({ navigation }) => {
         </Form>
       </View>
       <View style={{ paddingTop: 20,marginLeft:20, marginRight:20 }}>
-        <Button
-           color="#616161"
-          onPress={() => {
-            removeAllObject();
-          }}
-          title="Supprimer tous les objets"
-        ></Button>
+    
       </View>
       {objects.map((object, index) => displayCard(object, index))}
     </ScrollView>
