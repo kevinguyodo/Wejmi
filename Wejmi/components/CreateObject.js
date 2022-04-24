@@ -53,7 +53,6 @@ export default ({ navigation }) => {
 
     setAllObjectInformation(newObject);
     createFile(newObject);
-
     setName("");
     setPlaces("");
     setCompartment("");
@@ -187,7 +186,7 @@ export default ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 2,
-      borderColor: "#212121",
+    borderColor: "#212121",
     marginTop: 100,
     justifyContent: "center",
     padding: 50,
@@ -212,18 +211,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAF9F6",
     textAlign: "center",
     fontWeight: "bold",
-
   },
   compartment: {
-    
-
     textAlign: "center",
     fontWeight: "bold",
     paddingBottom: 10,
     backgroundColor: "#FAF9F6",
   },
   card: {
-    
     backgroundColor: "#9E9E9E",
     shadowColor: "#000",
     shadowOffset: {

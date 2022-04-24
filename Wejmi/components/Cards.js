@@ -3,7 +3,6 @@ import { TouchableOpacity } from "react-native";
 import { arrayOfStatus } from "./Home";
 
 export default ({
-  id,
   name,
   place,
   compartment,
@@ -37,11 +36,7 @@ export default ({
 
   const statusEmoticon = () => {
     if (status === arrayOfStatus[0]) {
-      return (
-        <Title>
-          {id} - {name} 🟢
-        </Title>
-      );
+      return <Title>{name} 🟢</Title>;
     } else if (status === arrayOfStatus[1]) {
       return <Title>{name} 🟡</Title>;
     } else {

@@ -108,7 +108,6 @@ export default ({ navigation }) => {
     ];
     const card = (
       <Cards
-        id={object.id}
         name={object.name}
         place={object.place}
         compartment={object.compartment}
