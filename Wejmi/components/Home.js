@@ -72,11 +72,6 @@ export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
   const [filterElement, setFilterElement] = useState("");
   const [statusFilter, setStatusFiltrer] = useState("");
-  const removeAllObject = () => {
-    const newObject = objects.filter((object) => !object.name.length != 0);
-    setObject(newObject);
-    createFile(newObject);
-  };
 
   const removeOneObject = (obj) => {
     const allObject = setObject((objects) =>
@@ -204,14 +199,6 @@ export default ({ navigation }) => {
             ))}
           </Picker>
         </Form>
-      </View>
-      <View style={{ paddingTop: 10 }}>
-        <Button
-          onPress={() => {
-            removeAllObject();
-          }}
-          title="Supprimer tous les objets"
-        ></Button>
       </View>
       {objects.map((object, index) => displayCard(object, index))}
     </ScrollView>
