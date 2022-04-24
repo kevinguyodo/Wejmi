@@ -1,14 +1,8 @@
-import {
-  View,
-  Button,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
+import { View, Button, StyleSheet, TextInput, ScrollView } from "react-native";
 import { Form, Picker } from "native-base";
 import { useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
+import * as ImagePicker from "expo-image-picker";
 import Cards from "./Cards";
 
 const fileURI = FileSystem.documentDirectory + "Wejmi.json";
@@ -28,7 +22,6 @@ export const readFile = async (setObject) => {
       return a.name.localeCompare(b.name);
     });
     setObject(contentParse);
-    console.log(contentParse);
   }
 };
 
@@ -45,16 +38,52 @@ export const arrayOfPlaces = [
 ];
 
 export const arrayOfStatus = ["A sa place", "Déplacé temporairement", "Perdu"];
+
+// --------------- Copy picture in document folder ------------------------------
+export const copyFile = async (image) => {
+  let fileName = image.uri.substring(
+    image.uri.lastIndexOf("/") + 1,
+    image.uri.length
+  );
+  const uri = `${FileSystem.documentDirectory}${fileName}`;
+
+  await FileSystem.copyAsync({
+    from: image.uri,
+    to: uri,
+  });
+  return uri;
+};
+
+// --------------- Use camera to take a picture ------------------------------
+export const openCamera = async (setImageURI) => {
+  let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+  if (permissionResult.granted === false) {
+    alert("Permission to access camera roll is required!");
+    return;
+  }
+
+  let pickerResult = await ImagePicker.launchCameraAsync();
+
+  let URIChanged = await copyFile(pickerResult);
+  setImageURI(URIChanged);
+};
 export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
   const [filterElement, setFilterElement] = useState("");
   const [statusFilter, setStatusFiltrer] = useState("");
-
   const removeAllObject = () => {
     const newObject = objects.filter((object) => !object.name.length == 0);
     setObject(newObject);
     createFile(newObject);
 
+  };
+
+  const removeOneObject = (obj) => {
+    const allObject = setObject((objects) =>
+      objects.filter((i) => i.name !== obj)
+    );
+    createFile(allObject);
   };
 
   const modifyObject = (object) => {
@@ -68,25 +97,24 @@ export default ({ navigation }) => {
         object.status = newObject.status;
         object.description = newObject.description;
         object.image = newObject.image;
-        setObject([...objects]);
-        createFile(objects);
+        let test = setObject([...objects]);
+        createFile(test);
       },
     });
   };
 
   // Affichage conditionnel
   const displayCard = (object, index) => {
-    let filter = [];
     const objectElementArray = [
       object.name,
       object.place,
       object.compartment,
       object.furniture,
-      // object.status,
       object.description,
     ];
     const card = (
       <Cards
+        id={object.id}
         name={object.name}
         place={object.place}
         compartment={object.compartment}
@@ -96,6 +124,9 @@ export default ({ navigation }) => {
         image={object.image}
         modifyObject={() => {
           modifyObject(object);
+        }}
+        removeObject={() => {
+          removeOneObject(object.name);
         }}
         key={index}
       />
@@ -124,30 +155,6 @@ export default ({ navigation }) => {
         }
       }
     }
-    // return card;
-    // if (filterElement.length == 0 && statusFilter.length == 0) {
-    //   return card;
-    // } else {
-    //   for (
-    //     let indexArray = 0;
-    //     indexArray <= objectElementArray.length;
-    //     indexArray++
-    //   ) {
-    //     if (objectElementArray[indexArray] == filterElement) {
-    //       filter.push(objectElementArray[indexArray]);
-    //     }
-    //     if (objectElementArray[index] == statusFilter) {
-    //       filter.push(objectElementArray[indexArray]);
-    //     }
-    //   }
-    //   console.log(filter);
-    //   for (let indextest = 0; indextest <= filter.length; indextest++) {
-    //     console.log(filter);
-    //     // if (filter[indextest] == object.status) {
-    //     //   return card;
-    //     // }
-    //   }
-    // }
   };
 
   const changeFilterStatus = (newStatus) => {
@@ -163,7 +170,7 @@ export default ({ navigation }) => {
       <View style={styles.containHeader}>
         <Button
           style={styles.header}
-          title="Create Card"
+          title="Enregistrer un objet"
           onPress={() => {
             navigation.navigate("Create");
           }}
@@ -181,7 +188,7 @@ export default ({ navigation }) => {
       <View style={styles.inputTxt}>
         <TextInput
           style={{ height: 40, paddingLeft: 10 }}
-          placeholder="Trouve ton objet Marmoud ..."
+          placeholder="Trouve ton objet ..."
           onChangeText={(newfilter) => setFilterElement(newfilter)}
         />
         <Form style={{ alignItems: "center" }}>
@@ -198,19 +205,16 @@ export default ({ navigation }) => {
             ))}
           </Picker>
         </Form>
-        {/* <Button onPress={displayCard} /> */}
       </View>
       <View style={{ paddingTop: 10 }}>
         <Button
           onPress={() => {
             removeAllObject();
           }}
-          title="Supprimer tout les objets"
+          title="Supprimer tous les objets"
         ></Button>
       </View>
-      {/* <ScrollView style={styles.containerHome}> */}
       {objects.map((object, index) => displayCard(object, index))}
-      {/* </ScrollView> */}
     </ScrollView>
   );
 };

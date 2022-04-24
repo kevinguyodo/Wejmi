@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { arrayOfStatus } from "./Home";
 
 export default ({
+  id,
   name,
   place,
   compartment,
@@ -12,6 +13,7 @@ export default ({
   description,
   image,
   modifyObject,
+  removeObject,
 }) => {
   // Affichage conditionnel
   const displayImage = () => {
@@ -37,7 +39,11 @@ export default ({
 
   const statusEmoticon = () => {
     if (status === arrayOfStatus[0]) {
-      return <Title>{name} 🟢</Title>;
+      return (
+        <Title>
+          {id} - {name} 🟢
+        </Title>
+      );
     } else if (status === arrayOfStatus[1]) {
       return <Title>{name} 🟡</Title>;
     } else {
@@ -45,7 +51,7 @@ export default ({
     }
   };
   return (
-    <TouchableOpacity onLongPress={modifyObject}>
+    <TouchableOpacity onPress={modifyObject} onLongPress={removeObject}>
       <Card style={styles.card}>
         <Card.Content>{statusEmoticon()}</Card.Content>
         <Card.Content>

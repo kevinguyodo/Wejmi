@@ -8,9 +8,13 @@ import {
   Text,
 } from "react-native";
 import { Picker, Form } from "native-base";
-import * as FileSystem from "expo-file-system";
-import * as ImagePicker from "expo-image-picker";
-import { readFile, createFile, arrayOfPlaces, arrayOfStatus } from "./Home";
+import {
+  readFile,
+  openCamera,
+  createFile,
+  arrayOfPlaces,
+  arrayOfStatus,
+} from "./Home";
 
 export default ({ navigation }) => {
   // --------------- Creation of all Hooks ------------------------------
@@ -24,37 +28,6 @@ export default ({ navigation }) => {
   const [allObjectInformation, setAllObjectInformation] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState(false);
-
-  // --------------- Use camera to take a picture ------------------------------
-  const openCamera = async () => {
-    let permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-
-    if (permissionResult.granted === false) {
-      alert("Permission to access camera roll is required!");
-      return;
-    }
-
-    let pickerResult = await ImagePicker.launchCameraAsync();
-
-    let URIChanged = await copyFile(pickerResult);
-    console.log(URIChanged);
-    setImageURI(URIChanged);
-  };
-
-  // --------------- Copy picture in document folder ------------------------------
-  const copyFile = async (image) => {
-    let fileName = image.uri.substring(
-      image.uri.lastIndexOf("/") + 1,
-      image.uri.length
-    );
-    const uri = `${FileSystem.documentDirectory}${fileName}`;
-
-    await FileSystem.copyAsync({
-      from: image.uri,
-      to: uri,
-    });
-    return uri;
-  };
 
   const onPlacesChanges = (newPlaces) => {
     setPlaces(newPlaces);
@@ -77,8 +50,10 @@ export default ({ navigation }) => {
         image: imageURI,
       },
     ];
+
     setAllObjectInformation(newObject);
     createFile(newObject);
+
     setName("");
     setPlaces("");
     setCompartment("");
@@ -101,7 +76,12 @@ export default ({ navigation }) => {
         >
           Photo capturé
         </Text>
-        <Button title="Prendre une photo" onPress={openCamera} />
+        <Button
+          title="Prendre une photo"
+          onPress={() => {
+            openCamera(setImageURI);
+          }}
+        />
       </View>
 
       <View>
@@ -149,7 +129,6 @@ export default ({ navigation }) => {
           }
         />
       </View>
-      {/* Placer le status de l'objet  */}
 
       <View style={{ paddingLeft: 10 }}>
         <Form style={{ alignItems: "center" }}>
