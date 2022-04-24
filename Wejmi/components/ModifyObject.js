@@ -50,7 +50,7 @@ export default ({ route, navigation }) => {
       },
     ];
     setNewObjectInformation(newObject);
-    createFile(newObject);
+    //createFile(newObject);
     setNewName("");
     setNewPlaces("");
     setNewCompartment("");
