@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native-web";
+import { Button, StyleSheet, View } from "react-native-web";
 import { Card, Title, Paragraph } from "react-native-paper";
 import { TouchableOpacity } from "react-native";
 import { arrayOfStatus } from "./Home";

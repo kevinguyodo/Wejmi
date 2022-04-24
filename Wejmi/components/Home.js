@@ -32,6 +32,7 @@ export const readFile = async (setObject) => {
   }
 };
 
+
 export const arrayOfPlaces = [
   "Salon",
   "Salle à manger",
@@ -45,6 +46,7 @@ export const arrayOfPlaces = [
 ];
 
 export const arrayOfStatus = ["A sa place", "Déplacé temporairement", "Perdu"];
+
 export default ({ navigation }) => {
   const [objects, setObject] = useState([]);
   const [filterElement, setFilterElement] = useState("");
